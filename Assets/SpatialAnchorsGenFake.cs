@@ -18,6 +18,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     int width_recording;
 
     void Start() {
+        // TODO make framerate var. is closer to, like, 70-80 fps, def not 30...ooof
         len_record = 30 * 60 * 2;
         width_recording = 1 + 2 * 3 + 2 * 4;
         array = new float[len_record, width_recording]; // 10 minutes total.
