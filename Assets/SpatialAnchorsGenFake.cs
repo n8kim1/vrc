@@ -19,6 +19,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
     void Start() {
         len_record = 30 * 60 * 2;
+        width_recording = 1 + 2 * 3 + 2 * 4;
         array = new float[len_record, width_recording]; // 10 minutes total.
         // TODO check, can you really hold this in memory? OTOH how laggy is streamwriter?
         record_idx = 0;
