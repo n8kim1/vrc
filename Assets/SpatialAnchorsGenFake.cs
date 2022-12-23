@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.IO;
  
 /// <summary>
 /// Manages the spatial anchors of the project
@@ -14,10 +15,11 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     float[,] array;
     int record_idx;
     bool is_recording;
+    int width_recording;
 
     void Start() {
         len_record = 30 * 60 * 2;
-        array = new float[len_record, 1 + 2 * 3 + 2 * 4]; // 10 minutes total.
+        array = new float[len_record, width_recording]; // 10 minutes total.
         // TODO check, can you really hold this in memory? OTOH how laggy is streamwriter?
         record_idx = 0;
         is_recording = true;
@@ -75,9 +77,10 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
             record_idx += 1;
 
-            if (record_idx <= 10)
+            // display some stuff for debug
+            if (record_idx <= 60 * 10)
             {
-                displayText.text = objectPose.position.x.ToString();
+                displayText.text = objectPose.position.x.ToString() + "\n" + record_idx.ToString();
             }
 
 
@@ -97,5 +100,22 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
         OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.LTouch);
         displayText.text = "press!";
+
+        string fname = System.DateTime.Now.ToString("HH-mm-ss") + ".csv";
+        string path = Path.Combine(Application.persistentDataPath, fname);
+        StreamWriter file = new StreamWriter(path);
+
+        for (int i = 0; i < len_record - 10; i++)
+        {
+            for (int j = 0; j < width_recording; j++)
+            {
+                file.Write(array[i, j]);
+                file.Write(",");
+            }
+            file.WriteLine();
+        }
+        file.Close();
+
+        displayText.text = "dumped recording, hopefully!";
     }
 }
