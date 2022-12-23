@@ -7,16 +7,20 @@ using UnityEngine;
 /// </summary>
 public class SpatialAnchorsGenFake : MonoBehaviour
 {  
+
+    void Start() {
+        OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
+    }
+
     /// <summary>
     /// Update
     /// </summary>
     void Update()
     {
         OVRInput.Update();
-        OVRInput.FixedUpdate();
 
-        bool trigger1Pressed = OVRInput.GetDown(OVRInput.Button.One);
-        bool trigger2Pressed = OVRInput.GetDown(OVRInput.Button.Two);
+        bool trigger1Pressed = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.LTouch);
+        bool trigger2Pressed = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch);
  
         //if the user has pressed the index trigger on one of the two controllers, generate an object in that position
         if (trigger1Pressed) {
@@ -35,7 +39,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     /// <param name="isLeft">If the controller to take as reference is the left or right one</param>
     private void GenerateObject(bool isLeft)
     {
-        OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
+        OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.LTouch);
         // //get the pose of the controller in local tracking coordinates
         // OVRPose objectPose = new OVRPose()
         // {
