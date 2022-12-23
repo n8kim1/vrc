@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
  
 /// <summary>
 /// Manages the spatial anchors of the project
 /// </summary>
 public class SpatialAnchorsGenFake : MonoBehaviour
 {  
+
+    public TMP_Text displayText;
 
     void Start() {
         OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
@@ -40,6 +43,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     private void GenerateObject(bool isLeft)
     {
         OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.LTouch);
+        displayText.text = "press!";
         // //get the pose of the controller in local tracking coordinates
         // OVRPose objectPose = new OVRPose()
         // {
