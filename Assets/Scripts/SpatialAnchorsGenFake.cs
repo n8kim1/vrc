@@ -29,6 +29,13 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     int record_idx = 0;
     bool is_recording = false;
 
+    bool in_peak = false;
+    int peak_counter = 0;
+    float lastTime = 0;
+    float lastX = 0;
+    float lastY = 0;
+    float lastZ = 0;
+
     void Start() {
         is_recording = true;
 
@@ -104,6 +111,39 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             {
                 displayText.text = objectPose.position.x.ToString() + "\n" + record_idx.ToString();
             }
+
+            float velo = (lastX - objectPose.position.x) * (lastX - objectPose.position.x) + (lastY - objectPose.position.y) * (lastY - objectPose.position.y) + (lastX - objectPose.position.z) * (lastX - objectPose.position.z);
+            velo = Math.pow(velo, 0.5);
+            velo = velo / (lastTime - array[record_idx, 0]);
+
+            if (in_peak) {
+                if (velo < 1.5) {
+                    peak_counter = peak_counter+1;
+                    if (peak_counter >= 2) {
+                        in_peak = false;
+                    }
+                }
+            }
+
+            else {
+                if (velo > 1.5) {
+                    peak_counter = peak_counter+1;
+                    if (peak_counter >= 2) {
+                        in_peak = true;
+                        OVRInput.SetControllerVibration(1, 0.1, OVRInput.Controller.RTouch);
+                    }
+                }
+            }
+
+
+
+            lastTime = array[record_idx, 0]; 
+            // TODO sigh ^
+            lastX = objectPose.position.x;
+            lastX = objectPose.position.y;
+            lastX = objectPose.position.z;
+
+
 
             // prep for the next loop
             record_idx += 1;
