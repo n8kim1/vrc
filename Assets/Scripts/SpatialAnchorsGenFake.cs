@@ -46,7 +46,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         {
             // check button presses
             bool trigger1Pressed = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.LTouch);
-            if (trigger1Pressed or (record_idx >= len_recording - 10) {
+            if (trigger1Pressed or (record_idx >= len_recording - 10)) {
                 StopRecording();
             }
 
