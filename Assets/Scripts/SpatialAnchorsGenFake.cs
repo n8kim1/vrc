@@ -4,26 +4,32 @@ using UnityEngine;
 using TMPro;
 using System.IO;
  
+// TODO docstrings
+// TOOD better names lmao
 /// <summary>
 /// Manages the spatial anchors of the project
 /// </summary>
 public class SpatialAnchorsGenFake : MonoBehaviour
 {  
+    // TODO make these constants for performance reasons
+
+    int framerate = 70; // THIS IS AN APPROXIMATION!
+    // Tweak as necessary based on how the code runs.
+    // TODO consider using fixedUpdate
+
+    int minutes_recording = 2; // tweak in case of memory issues
+    int len_recording = framerate*60*minutes_recording;
+
+    // Data exported as 
+    // ts, LH pos, LH orient quats, RH pos, RH orient quats
+    int width_recording = 1+3+4+3+4;
 
     public TMP_Text displayText;
-    int len_record;
-    float[,] array;
-    int record_idx;
-    bool is_recording;
-    int width_recording;
+    float[,] array = new float[len_recording, width_recording];;
+    int record_idx = 0;
+    bool is_recording = false;
 
     void Start() {
-        // TODO make framerate var. is closer to, like, 70-80 fps, def not 30...ooof
-        len_record = 30 * 60 * 2;
-        width_recording = 1 + 2 * 3 + 2 * 4;
-        array = new float[len_record, width_recording]; // 10 minutes total.
-        // TODO check, can you really hold this in memory? OTOH how laggy is streamwriter?
-        record_idx = 0;
         is_recording = true;
 
         OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
@@ -40,19 +46,35 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         {
             // check button presses
             bool trigger1Pressed = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.LTouch);
-            if (trigger1Pressed)
-            {
+            if (trigger1Pressed or (record_idx >= len_recording - 10) {
                 StopRecording();
             }
 
+            // TODO conside building each row of array incrementally
+            // eg 
+            // row[0] = Time.time
+            // ...
+            // array[record_idx] = row
+            // Might be helpful for performance
+
             array[record_idx, 0] = Time.time;
 
-            // Get left position, converted
+            // Get left position
             OVRPose objectPose = new OVRPose()
             {
                 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch),
                 orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch)
             };
+
+            // TODO consider converting to world coordinates. 
+            // Probably unnecessary, just use translations, unless scale is different.
+            // What's the diff btwn the two coordinates? Need to google
+            // worldObjectPose = OVRExtensions.ToWorldSpacePose(objectPose);
+
+            // TODO consider saving a row directly.
+            // Depends on if position can be exposed as a row, 
+            // and then also this probably requires 4 distinct arrays 
+            // cuz destructring hard.
             array[record_idx, 1] = objectPose.position.x;
             array[record_idx, 2] = objectPose.position.y;
             array[record_idx, 3] = objectPose.position.z;
@@ -68,7 +90,6 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch),
                 orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch)
             };
-            // worldObjectPose = OVRExtensions.ToWorldSpacePose(objectPose);
             array[record_idx, 1 + 7] = objectPose.position.x;
             array[record_idx, 2 + 7] = objectPose.position.y;
             array[record_idx, 3 + 7] = objectPose.position.z;
@@ -77,21 +98,16 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             array[record_idx, 6 + 7] = objectPose.orientation.y;
             array[record_idx, 7 + 7] = objectPose.orientation.z;
 
-            record_idx += 1;
-
             // display some stuff for debug
+            // TODO flag this but oh well
             if (record_idx <= 60 * 10)
             {
                 displayText.text = objectPose.position.x.ToString() + "\n" + record_idx.ToString();
             }
 
-
-            if (record_idx >= len_record - 10)
-            {
-                StopRecording();
-            }
+            // prep for the next loop
+            record_idx += 1;
         }
-
 
 
     }
@@ -101,13 +117,13 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         is_recording = false;
 
         OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.LTouch);
-        displayText.text = "press!";
+        displayText.text = "Stopping...";
 
         string fname = System.DateTime.Now.ToString("HH-mm-ss") + ".csv";
         string path = Path.Combine(Application.persistentDataPath, fname);
         StreamWriter file = new StreamWriter(path);
 
-        for (int i = 0; i < len_record - 10; i++)
+        for (int i = 0; i < len_recording - 10; i++)
         {
             for (int j = 0; j < width_recording; j++)
             {
@@ -118,6 +134,6 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         }
         file.Close();
 
-        displayText.text = "dumped recording, hopefully!";
+        displayText.text = "Dumped recording, hopefully!";
     }
 }
