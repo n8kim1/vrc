@@ -12,20 +12,19 @@ using System.IO;
 public class SpatialAnchorsGenFake : MonoBehaviour
 {  
     // TODO make these constants for performance reasons
-
-    int framerate = 70; // THIS IS AN APPROXIMATION!
+    static int framerate = 70; // THIS IS AN APPROXIMATION!
     // Tweak as necessary based on how the code runs.
     // TODO consider using fixedUpdate
 
-    int minutes_recording = 2; // tweak in case of memory issues
-    int len_recording = framerate*60*minutes_recording;
+    static int minutes_recording = 2; // tweak in case of memory issues
+    static int len_recording = framerate*60*minutes_recording;
 
     // Data exported as 
     // ts, LH pos, LH orient quats, RH pos, RH orient quats
-    int width_recording = 1+3+4+3+4;
+    static int width_recording = 1+3+4+3+4;
 
     public TMP_Text displayText;
-    float[,] array = new float[len_recording, width_recording];;
+    float[,] array = new float[len_recording, width_recording];
     int record_idx = 0;
     bool is_recording = false;
 
@@ -53,7 +52,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         {
             // check button presses
             bool trigger1Pressed = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.LTouch);
-            if (trigger1Pressed or (record_idx >= len_recording - 10)) {
+            if (trigger1Pressed || (record_idx >= len_recording - 10)) {
                 StopRecording();
             }
 
@@ -113,7 +112,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             }
 
             float velo = (lastX - objectPose.position.x) * (lastX - objectPose.position.x) + (lastY - objectPose.position.y) * (lastY - objectPose.position.y) + (lastX - objectPose.position.z) * (lastX - objectPose.position.z);
-            velo = Math.pow(velo, 0.5);
+            // using Unity's Math package
+            velo = Mathf.Pow(velo, 0.5f);
             velo = velo / (lastTime - array[record_idx, 0]);
 
             if (in_peak) {
@@ -130,7 +130,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     peak_counter = peak_counter+1;
                     if (peak_counter >= 2) {
                         in_peak = true;
-                        OVRInput.SetControllerVibration(1, 0.1, OVRInput.Controller.RTouch);
+                        OVRInput.SetControllerVibration(1, 0.1f, OVRInput.Controller.RTouch);
                     }
                 }
             }
@@ -142,8 +142,6 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             lastX = objectPose.position.x;
             lastX = objectPose.position.y;
             lastX = objectPose.position.z;
-
-
 
             // prep for the next loop
             record_idx += 1;
