@@ -140,8 +140,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             lastTime = array[record_idx, 0]; 
             // TODO sigh ^
             lastX = objectPose.position.x;
-            lastX = objectPose.position.y;
-            lastX = objectPose.position.z;
+            lastY = objectPose.position.y;
+            lastZ = objectPose.position.z;
 
             // prep for the next loop
             record_idx += 1;
