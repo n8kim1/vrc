@@ -30,6 +30,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
     bool in_peak = false;
     int peak_counter = 0;
+    float curTime = 0;
     float lastTime = 0;
     float lastX = 0;
     float lastY = 0;
@@ -63,7 +64,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             // array[record_idx] = row
             // Might be helpful for performance
 
-            array[record_idx, 0] = Time.time;
+            curTime = Time.time;
+            array[record_idx, 0] = curTime;
 
             // Get left position
             OVRPose objectPose = new OVRPose()
@@ -104,23 +106,24 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             array[record_idx, 6 + 7] = objectPose.orientation.y;
             array[record_idx, 7 + 7] = objectPose.orientation.z;
 
-            // display some stuff for debug
-            // TODO flag this but oh well
-            if (record_idx <= 60 * 10)
-            {
-                displayText.text = objectPose.position.x.ToString() + "\n" + record_idx.ToString();
-            }
-
             float velo = (lastX - objectPose.position.x) * (lastX - objectPose.position.x) + (lastY - objectPose.position.y) * (lastY - objectPose.position.y) + (lastX - objectPose.position.z) * (lastX - objectPose.position.z);
             // using Unity's Math package
             velo = Mathf.Pow(velo, 0.5f);
             velo = velo / (lastTime - array[record_idx, 0]);
+
+            // display some stuff for debug
+            // TODO flag this but oh well
+            if (true)
+            {
+                displayText.text = velo.ToString() + "\n";
+            }
 
             if (in_peak) {
                 if (velo < 1.5) {
                     peak_counter = peak_counter+1;
                     if (peak_counter >= 2) {
                         in_peak = false;
+                        peak_counter  = 0;
                     }
                 }
             }
@@ -131,6 +134,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     if (peak_counter >= 2) {
                         in_peak = true;
                         OVRInput.SetControllerVibration(1, 0.1f, OVRInput.Controller.RTouch);
+                        peak_counter = 0;
                     }
                 }
             }
