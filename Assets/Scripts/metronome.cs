@@ -1,3 +1,6 @@
+// https://forum.unity.com/threads/do-people-not-realize-how-bad-audiosource-dsptime-is-can-someone-explain-how-it-works.402308/#post-5486028
+// https://docs.unity3d.com/2017.4/Documentation/ScriptReference/AudioSettings-dspTime.html
+
 using UnityEngine;
 using System.Collections;
 
@@ -9,17 +12,14 @@ public class Metronome : MonoBehaviour
 {
     public double bpm = 140.0F;
     public float gain = 0.5F;
-    public int signatureHi = 4;
-    public int signatureLo = 4;
     private double nextTick = 0.0F;
     private float amp = 0.0F;
+    // TODO how does phase, like, work properly
     private float phase = 0.0F;
     private double sampleRate = 0.0F;
-    private int accent;
     private bool running = false;
     void Start()
     {
-        accent = signatureHi;
         double startTick = AudioSettings.dspTime;
         sampleRate = AudioSettings.outputSampleRate;
         nextTick = startTick * sampleRate;
@@ -31,11 +31,12 @@ public class Metronome : MonoBehaviour
         if (!running)
             return;
 
-        double samplesPerTick = sampleRate * 60.0F / bpm * 4.0F / signatureLo;
+        double samplesPerTick = sampleRate * 60.0F / bpm;
         double sample = AudioSettings.dspTime * sampleRate;
+        // data is interleaved; 
+        // dataLen gets the number of samples per channel
         int dataLen = data.Length / channels;
-        int n = 0;
-        while (n < dataLen)
+        for (int n = 0; n < dataLen; n++)
         {
             float x = gain * amp * Mathf.Sin(phase);
             int i = 0;
@@ -48,16 +49,14 @@ public class Metronome : MonoBehaviour
             {
                 nextTick += samplesPerTick;
                 amp = 1.0F;
-                if (++accent > signatureHi)
-                {
-                    accent = 1;
-                    amp *= 2.0F;
-                }
-                Debug.Log("Tick: " + accent + "/" + signatureHi);
+                Debug.Log("Tick: " + nextTick);
             }
+            // TODO change phase to a thing that's, like, linear wrt to time?
+            // should create a constant tone. at least that would let me ignore some complexity
+            // also figure out how midi works while i'm at it
             phase += amp * 0.3F;
-            amp *= 0.993F;
-            n++;
+            // Exponential decay amp over time for each sample
+            amp *= 0.996F;
         }
     }
 }
