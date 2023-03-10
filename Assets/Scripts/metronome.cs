@@ -54,9 +54,9 @@ public class Metronome : MonoBehaviour
             // TODO change phase to a thing that's, like, linear wrt to time?
             // should create a constant tone. at least that would let me ignore some complexity
             // also figure out how midi works while i'm at it
-            phase += amp * 0.3F;
+            phase += 0.125F;
             // Exponential decay amp over time for each sample
-            amp *= 0.996F;
+            amp *= 0.9999F;
         }
     }
 }
