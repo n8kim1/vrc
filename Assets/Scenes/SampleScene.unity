@@ -627,7 +627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayText: {fileID: 11498998}
-  metronome: {fileID: 0}
+  metronomeScheduled: {fileID: 1631814693}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

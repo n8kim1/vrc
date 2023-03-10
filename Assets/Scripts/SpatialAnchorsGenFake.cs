@@ -36,6 +36,10 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     float lastY = 0;
     float lastZ = 0;
 
+    // references to metronome stuff
+    public MetronomeScheduled metronomeScheduled;
+
+
     void Start() {
         is_recording = true;
 
@@ -139,13 +143,20 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 }
             }
 
-
-
+            // Prep for next iter
             lastTime = array[record_idx, 0]; 
             // TODO sigh ^
             lastX = objectPose.position.x;
             lastY = objectPose.position.y;
             lastZ = objectPose.position.z;
+
+            // Alternatively, for debug, allow for keypresses to simulate signaled beats.
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("space key was pressed");
+                metronomeScheduled.AskForBeat();
+
+            }
 
             // prep for the next loop
             record_idx += 1;

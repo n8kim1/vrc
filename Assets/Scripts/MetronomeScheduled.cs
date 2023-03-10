@@ -25,6 +25,7 @@ public class MetronomeScheduled : MonoBehaviour {
 
     public void AskForBeat() {
         // TODO
+        Debug.Log("Beat asked for");
     }
 
     private bool IsNearlyTimeForNextTick() { 
