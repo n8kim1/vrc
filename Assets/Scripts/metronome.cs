@@ -28,6 +28,8 @@ public class Metronome : MonoBehaviour
 
     void OnAudioFilterRead(float[] data, int channels)
     {
+        return;
+
         if (!running)
             return;
 
