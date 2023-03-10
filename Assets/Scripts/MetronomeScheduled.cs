@@ -3,15 +3,20 @@ using UnityEngine;
 public class MetronomeScheduled : MonoBehaviour { 
     public AudioSource audioSourceTickBasic; 
  
-    public double bpm = 140.0F; 
+    public double bpmInitial = 140.0F; 
  
     private double nextTickTime = 0.0F; 
     private double beatDuration; 
+
+    private double lastBeatIntended = 0.0F;
+    private double bpmIntended = 140.0F;
  
     void Start() { 
-        beatDuration = 60.0F / bpm;  // seconds per beat. use this to time and stuff
+        beatDuration = 60.0F / bpmInitial; // seconds per beat
         double startTick = AudioSettings.dspTime; 
         nextTickTime = startTick; 
+
+        lastBeatIntended = startTick;
     } 
  
     void Update() { 
@@ -20,8 +25,25 @@ public class MetronomeScheduled : MonoBehaviour {
     } 
 
     public void AskForBeat() {
-        // TODO
-        Debug.Log("Beat asked for");
+        double time = AudioSettings.dspTime;
+
+        double beatDurationIntended = time - lastBeatIntended;
+        // TODO naive way of quickly setting beatDuration, try more dynamic things
+        beatDuration = beatDurationIntended;
+
+        double bpmIntended = 60.0F / beatDurationIntended;
+        Debug.Log("Beat asked for, intended bpm" + bpmIntended);
+        // TODO if you look at the raw bpm intended,
+        // it takes on only so many _discrete_ values
+        // (127, 134, 140, 148, 156...)
+        // This suggests _scary framerate limitations_ --
+        // that AskForBeat can only be called every, like, 30 FPS or so
+        // which would not be good.
+        // It remains to be seen how much using guards (max/min bounds,
+        // dynamic shifting over time rather than a full reset etc)
+        // would help
+        
+        lastBeatIntended = time;
     }
 
     private bool IsNearlyTimeForNextTick() { 
