@@ -2,7 +2,6 @@ using UnityEngine;
  
 public class MetronomeScheduled : MonoBehaviour { 
     public AudioSource audioSourceTickBasic; 
-    public AudioSource audioSourceTickAccent; 
  
     public double bpm = 140.0F; 
     public int beatsPerMeasure = 4; 
@@ -37,21 +36,8 @@ public class MetronomeScheduled : MonoBehaviour {
     } 
  
     private void BeatAction() { 
-        beatCount++; 
-        string accentMessage = ""; 
- 
-        if (beatCount > beatsPerMeasure) 
-            accentMessage = AccentBeatAction(); 
-        else 
-            audioSourceTickBasic.PlayScheduled(nextTickTime); 
- 
+        audioSourceTickBasic.PlayScheduled(nextTickTime);  
         nextTickTime += beatDuration; 
-        // Debug.Log("Tick: " + beatCount + "/" + accentMessage); 
     } 
- 
-    private string AccentBeatAction() { 
-        audioSourceTickAccent.PlayScheduled(nextTickTime); 
-        beatCount = 1; 
-        return " -- ACCENT ---"; 
-    } 
+
 } 
