@@ -45,7 +45,7 @@ public class MetronomeScheduled : MonoBehaviour {
             audioSourceTickBasic.PlayScheduled(nextTickTime); 
  
         nextTickTime += beatDuration; 
-        print("Tick: " + beatCount + "/" + accentMessage); 
+        // Debug.Log("Tick: " + beatCount + "/" + accentMessage); 
     } 
  
     private string AccentBeatAction() { 

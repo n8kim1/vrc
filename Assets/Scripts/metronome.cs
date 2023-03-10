@@ -49,7 +49,7 @@ public class Metronome : MonoBehaviour
             {
                 nextTick += samplesPerTick;
                 amp = 1.0F;
-                Debug.Log("Tick: " + nextTick);
+                // Debug.Log("Tick: " + nextTick);
             }
             // TODO change phase to a thing that's, like, linear wrt to time?
             // should create a constant tone. at least that would let me ignore some complexity
