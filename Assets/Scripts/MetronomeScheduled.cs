@@ -29,11 +29,15 @@ public class MetronomeScheduled : MonoBehaviour {
 
         double beatDurationIntended = time - lastBeatIntended;
         // TODO naive way of quickly setting beatDuration, try more dynamic things
-        beatDuration = beatDurationIntended;
+        // beatDuration = beatDurationIntended;
+        // TODO make these weights a var
+        beatDuration = 0.5 * beatDurationIntended + 0.5 * beatDuration;
 
         double bpmIntended = 60.0F / beatDurationIntended;
         Debug.Log("Beat asked for, intended bpm" + bpmIntended);
-        // TODO if you look at the raw bpm intended,
+        double bpm = 60.0F / beatDuration;
+        Debug.Log("Beat asked for, adjusted bpm" + bpm);
+        // TODO if you look at the raw bpm intended (ie from beatDurationIntended),
         // it takes on only so many _discrete_ values
         // (127, 134, 140, 148, 156...)
         // This suggests _scary framerate limitations_ --
