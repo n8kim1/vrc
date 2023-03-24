@@ -1598,6 +1598,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSourceTickBasic: {fileID: 1631814694}
+  midiFilePlayer: {fileID: 1501458114}
+  scriptName: {fileID: 1466554765}
   bpmInitial: 140
 --- !u!82 &1631814694
 AudioSource:
