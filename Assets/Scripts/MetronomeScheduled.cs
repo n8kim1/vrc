@@ -61,6 +61,10 @@ public class MetronomeScheduled : MonoBehaviour {
  
     private void BeatAction() { 
         audioSourceTickBasic.PlayScheduled(nextTickTime);  
+        // Note that tempo changes are only _taken into account_ once a beat finishes
+        // TODO is it possible to, like, not do this, for _this_ class's scheduler?
+        // I think so, but I don't terribly plan on trying this
+        // rather than other approaches
         nextTickTime += beatDuration; 
     } 
 
