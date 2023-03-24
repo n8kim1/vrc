@@ -10,10 +10,19 @@ public class MidiPlayerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // TODO verify that this _works_
+        // IDK whether this has to be called before/after play.
+        // Easiest is to find a midi that definitely changes tempo early and noticeably
+        midiFilePlayer.MPTK_EnableChangeTempo = false;
+
+        MidiLoad midiloaded = midiFilePlayer.MPTK_Load();
+
+        // TODO I can't get original tempo to work fsr...
+        // Might have to do with timing on load or play or something
+        // midiFilePlayer.MPTK_Tempo = 140;
+
         // Print some info about the MIDI.
         // Is mainly useful for debugging and proof-of-concept/demo.
-
-        // MidiLoad midiloaded = midiFilePlayer.MPTK_Load();
         // if (midiloaded != null)
         // {
         //     infoMidi = "Duration: " + midiloaded.MPTK_Duration.TotalSeconds + " seconds\n";
