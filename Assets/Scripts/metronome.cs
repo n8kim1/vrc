@@ -44,7 +44,7 @@ public class Metronome : MonoBehaviour
             int i = 0;
             while (i < channels)
             {
-                data[n * channels + i] += x;
+                data[n * channels + i] += x; 
                 i++;
             }
             while (sample + n >= nextTick)
