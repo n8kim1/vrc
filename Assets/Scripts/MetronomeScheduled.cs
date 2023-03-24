@@ -3,12 +3,12 @@ using UnityEngine;
 public class MetronomeScheduled : MonoBehaviour { 
     public AudioSource audioSourceTickBasic; 
  
-    public double bpmInitial = 140.0F; 
+    public double bpmInitial = 210.0F; 
  
-    private double nextTickTime = 0.0F; 
+    private double nextTickTime; 
     private double beatDuration; 
 
-    private double lastBeatIntended = 0.0F;
+    private double lastBeatIntended;
     private double bpmIntended = 140.0F;
 
     // When updating BPM,
@@ -22,13 +22,20 @@ public class MetronomeScheduled : MonoBehaviour {
     void Start() { 
         beatDuration = 60.0F / bpmInitial; // seconds per beat
         double startTick = AudioSettings.dspTime; 
-        nextTickTime = startTick; 
 
+        // Set up initial state
         lastBeatIntended = startTick;
+        nextTickTime = lastBeatIntended + beatDuration; 
+        // TODO
+        // Note that as of now, this will autoplay, 
+        // until the first beat is called for.
+        // BPM will drastically slow (because the inferred beat includes that pause at the beginning)
+        // Better safeguards should take care of this?
     } 
  
-    void Update() { 
-        return;
+    void Update() {
+        // If you want a quick-and-dirty "mute", uncomment the following return stmt: 
+        // return;
         if (IsNearlyTimeForNextTick()) 
             BeatAction(); 
     } 
