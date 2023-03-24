@@ -48,4 +48,16 @@ public class MidiPlayerScript : MonoBehaviour
             midiFilePlayer.MPTK_Tempo *= 0.7;
         }
     }
+
+    public void SetTempo(double tempo)
+    {
+        midiFilePlayer.MPTK_Tempo = tempo;
+        Debug.Log("tempo set in MidiPlayerScript");
+    }
+
+    // To test whether this is being called anyways
+    public void PrintDebug()
+    {
+        Debug.Log("printdebug called");
+    }
 }

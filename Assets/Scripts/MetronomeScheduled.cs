@@ -1,8 +1,13 @@
 using UnityEngine; 
- 
+using MidiPlayerTK;
+
 public class MetronomeScheduled : MonoBehaviour { 
-    public AudioSource audioSourceTickBasic; 
- 
+    public AudioSource audioSourceTickBasic;
+    public MidiFilePlayer midiFilePlayer; 
+    public MidiPlayerScript scriptName;
+
+    // TODO no one wants to conduct in 210bpm
+    // drop to 105 and impl cut time properly
     public double bpmInitial = 210.0F; 
  
     private double nextTickTime; 
@@ -31,6 +36,11 @@ public class MetronomeScheduled : MonoBehaviour {
         // until the first beat is called for.
         // BPM will drastically slow (because the inferred beat includes that pause at the beginning)
         // Better safeguards should take care of this?
+
+        // Find the script hooked to the midiFilePlayer
+        // scriptName = midiFilePlayer.GetComponent<MidiPlayerScript>();
+        Debug.Log("script name " + scriptName);
+
     } 
  
     void Update() {
@@ -65,6 +75,10 @@ public class MetronomeScheduled : MonoBehaviour {
         // would help
         
         lastBeatIntended = time;
+
+        // midiPlayerScript.setTempo(bpm);
+        // scriptName.PrintDebug();
+        scriptName.SetTempo(bpm);
     }
 
     private bool IsNearlyTimeForNextTick() { 
