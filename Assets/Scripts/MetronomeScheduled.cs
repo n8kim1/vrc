@@ -10,6 +10,14 @@ public class MetronomeScheduled : MonoBehaviour {
 
     private double lastBeatIntended = 0.0F;
     private double bpmIntended = 140.0F;
+
+    // When updating BPM,
+    // how much weight is given to the latest signaled beat's duration
+    // (as opposed to the already-present beat duration)
+    // TODO fine-tune this based on "perceptible change in tempo"
+    // (ie what tempo stability is needed so that odd timing quirks don't really throw you off)
+    // TODO implement some stuff that's better w dropping beats etc
+    private const double beatDurationIntendedWeight = 0.15F;
  
     void Start() { 
         beatDuration = 60.0F / bpmInitial; // seconds per beat
@@ -29,10 +37,11 @@ public class MetronomeScheduled : MonoBehaviour {
         double time = AudioSettings.dspTime;
 
         double beatDurationIntended = time - lastBeatIntended;
-        // TODO naive way of quickly setting beatDuration, try more dynamic things
+        // A naive way of quickly setting beatDuration.
+        // Good to write abt as an introductory method
         // beatDuration = beatDurationIntended;
-        // TODO make these weights a var
-        beatDuration = 0.5 * beatDurationIntended + 0.5 * beatDuration;
+
+        beatDuration = beatDurationIntendedWeight * beatDurationIntended + (1-beatDurationIntendedWeight) * beatDuration;
 
         double bpmIntended = 60.0F / beatDurationIntended;
         Debug.Log("Beat asked for, intended bpm" + bpmIntended);
