@@ -32,5 +32,11 @@ public class MidiPlayerScript : MonoBehaviour
                 Debug.Log("p key was pressed");
                 midiFilePlayer.MPTK_Play();
             }
+        
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("t key was pressed, slowing tempo");
+            midiFilePlayer.MPTK_Tempo *= 0.7;
+        }
     }
 }
