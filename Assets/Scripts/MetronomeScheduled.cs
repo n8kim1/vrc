@@ -20,6 +20,7 @@ public class MetronomeScheduled : MonoBehaviour {
     } 
  
     void Update() { 
+        return;
         if (IsNearlyTimeForNextTick()) 
             BeatAction(); 
     } 
