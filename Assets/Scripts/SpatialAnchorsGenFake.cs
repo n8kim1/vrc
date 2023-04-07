@@ -24,6 +24,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     static int width_recording = 1+3+4+3+4;
 
     public TMP_Text displayText;
+    public TMP_Text debugText;
+
+
     float[,] array = new float[len_recording, width_recording];
     int record_idx = 0;
     bool is_recording = false;
@@ -119,7 +122,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             // TODO flag this but oh well
             if (true)
             {
-                displayText.text = velo.ToString() + "\n";
+                debugText.text = velo.ToString() + "\n";
             }
 
             if (in_peak) {
