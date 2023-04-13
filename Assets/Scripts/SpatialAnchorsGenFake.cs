@@ -4,11 +4,11 @@ using UnityEngine;
 using TMPro;
 using System.IO;
  
-// TODO docstrings
-// TOOD better names lmao
-/// <summary>
-/// Manages the spatial anchors of the project
-/// </summary>
+// Records the position of controllers, and does everything relevant.
+// Eg calculations to compute signaled beats,
+// saving data, etc
+
+// TODO better name for this class
 public class SpatialAnchorsGenFake : MonoBehaviour
 {  
     // TODO make these constants for performance reasons
@@ -23,6 +23,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // ts, LH pos, LH orient quats, RH pos, RH orient quats
     static int width_recording = 1+3+4+3+4;
 
+    // TODO conflict is imminent w the MidiPlayerScript ...
     public TMP_Text displayText;
     public TMP_Text debugText;
 

@@ -1,11 +1,15 @@
+// TODO am I even using the system.collections and .generic imports??
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MidiPlayerTK;
+using TMPro;
 
 public class MidiPlayerScript : MonoBehaviour
 {
     public MidiFilePlayer midiFilePlayer;
+
+    public TMP_Text mainText;
 
     // Start is called before the first frame update
     void Start()
@@ -15,7 +19,9 @@ public class MidiPlayerScript : MonoBehaviour
         // Easiest is to find a midi that definitely changes tempo early and noticeably
         midiFilePlayer.MPTK_EnableChangeTempo = false;
 
-        MidiLoad midiloaded = midiFilePlayer.MPTK_Load();
+        mainText.text = "";
+        mainText.text += "Controls:" + "\n";
+        mainText.text += "A to start" + "\n";
 
         // TODO I can't get original tempo to work fsr...
         // Might have to do with timing on load or play or something
@@ -23,6 +29,7 @@ public class MidiPlayerScript : MonoBehaviour
 
         // Print some info about the MIDI.
         // Is mainly useful for debugging and proof-of-concept/demo.
+        // MidiLoad midiloaded = midiFilePlayer.MPTK_Load();
         // if (midiloaded != null)
         // {
         //     infoMidi = "Duration: " + midiloaded.MPTK_Duration.TotalSeconds + " seconds\n";
@@ -32,17 +39,21 @@ public class MidiPlayerScript : MonoBehaviour
         //     Debug.Log(infoMidi);
         // }
 
-        midiFilePlayer.MPTK_Play();
+        // midiFilePlayer.MPTK_Play();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-            {
-                Debug.Log("p key was pressed");
-                midiFilePlayer.MPTK_Play();
-            }
+        // Check for both headset input and laptop-keyboard input (in debugging)
+        bool playPressed = OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.P);
+
+        if (playPressed)
+        {
+            Debug.Log("Play input was pressed");
+            midiFilePlayer.MPTK_Play();
+            mainText.text = "playing";
+        }
         
         if (Input.GetKeyDown(KeyCode.T))
         {
