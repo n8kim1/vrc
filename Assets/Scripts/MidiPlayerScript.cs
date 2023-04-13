@@ -18,6 +18,10 @@ public class MidiPlayerScript : MonoBehaviour
         // IDK whether this has to be called before/after play.
         // Easiest is to find a midi that definitely changes tempo early and noticeably
         midiFilePlayer.MPTK_EnableChangeTempo = false;
+        
+        // TODO better queueing mechanism.
+        // Right now it's like "start beats and then play when you're ready!"
+        midiFilePlayer.MPTK_StartPlayAtFirstNote = true;
 
         mainText.text = "";
         mainText.text += "Controls:" + "\n";
