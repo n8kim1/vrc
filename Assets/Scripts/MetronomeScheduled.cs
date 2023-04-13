@@ -63,7 +63,17 @@ public class MetronomeScheduled : MonoBehaviour {
         // Good to write abt as an introductory method
         // beatDuration = beatDurationIntended;
 
+        // TODO this needs some math, explanation, and tweaking.
+        // (param tweaking: tweak so that beats signaled halfway are dropped, and also so that skipping one entire beat but being a litttleee bit fast works fine. factors will need a teensy bit of buffer room)
+        // TODO also clean up the code
+        if (0.6 < beatDuration / beatDurationIntended && beatDuration / beatDurationIntended < 1/0.6)
+        {
         beatDuration = beatDurationIntendedWeight * beatDurationIntended + (1-beatDurationIntendedWeight) * beatDuration;
+        }
+        else {
+            Debug.Log("out of range, dropping");
+        }
+
 
         double bpmIntended = 60.0F / beatDurationIntended;
         Debug.Log("Beat asked for, intended bpm" + bpmIntended);
