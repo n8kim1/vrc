@@ -1,5 +1,7 @@
 using UnityEngine; 
 using MidiPlayerTK;
+using TMPro;
+
 
 public class MetronomeScheduled : MonoBehaviour { 
     public AudioSource audioSourceTickBasic;
@@ -15,6 +17,9 @@ public class MetronomeScheduled : MonoBehaviour {
 
     private double lastBeatIntended;
     private double bpmIntended = 140.0F;
+
+    public TMP_Text debugText;
+
 
     // When updating BPM,
     // how much weight is given to the latest signaled beat's duration
@@ -79,6 +84,10 @@ public class MetronomeScheduled : MonoBehaviour {
         // midiPlayerScript.setTempo(bpm);
         // scriptName.PrintDebug();
         scriptName.SetTempo(bpm);
+        if (true)
+        {
+            debugText.text = "bpm: " + (Mathf.Round((float) bpm*10)/10).ToString() + "\n";
+        }
     }
 
     private bool IsNearlyTimeForNextTick() { 
