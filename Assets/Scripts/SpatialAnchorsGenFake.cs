@@ -16,7 +16,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // Tweak as necessary based on how the code runs.
     // TODO consider using fixedUpdate
 
-    static int minutes_recording = 2; // tweak in case of memory issues
+    static int minutes_recording = 5; // tweak in case of memory issues
     static int len_recording = framerate*60*minutes_recording;
 
     // Data exported as 
@@ -174,6 +174,11 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
     }
 
+    // TODO auto-stop recording leads to weird behavior.
+    // In particular, recording-dump should not prevent the rest of the program from flowing
+    // Eg it stops in the middle of actually doing things.
+    // How to balance with the fact that recording itself should stop at some point?
+
     private void StopRecording()
     {
         is_recording = false;
@@ -185,6 +190,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         string path = Path.Combine(Application.persistentDataPath, fname);
         StreamWriter file = new StreamWriter(path);
 
+        // TODO -10 is a buffer in case frame updates late.
+        // I'm not actually sure it's needed tho.
         for (int i = 0; i < len_recording - 10; i++)
         {
             for (int j = 0; j < width_recording; j++)
@@ -196,6 +203,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         }
         file.Close();
 
+
+        // TODO i wonder where this is being dumped on laptop?
         displayText.text = "Dumped recording, hopefully!";
     }
 }
