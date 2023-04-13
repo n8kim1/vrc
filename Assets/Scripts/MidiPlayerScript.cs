@@ -11,6 +11,8 @@ public class MidiPlayerScript : MonoBehaviour
 
     public TMP_Text mainText;
 
+    bool isPlaying = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,13 +52,25 @@ public class MidiPlayerScript : MonoBehaviour
     void Update()
     {
         // Check for both headset input and laptop-keyboard input (in debugging)
-        bool playPressed = OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.P);
+        bool playTogglePressed = 
+            OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.P);
 
-        if (playPressed)
+        if (playTogglePressed)
         {
             Debug.Log("Play input was pressed");
-            midiFilePlayer.MPTK_Play();
-            mainText.text = "playing";
+            if (!isPlaying) {
+                midiFilePlayer.MPTK_Play();
+                mainText.text = "playing";
+                // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
+                // so we have to keep track of this manually.
+                // would be much better if not...
+                isPlaying = true;
+            }
+            else {
+                midiFilePlayer.MPTK_Pause();
+                mainText.text = "pausing";
+                isPlaying = false;
+            }
         }
         
         if (Input.GetKeyDown(KeyCode.T))
