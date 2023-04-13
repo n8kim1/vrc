@@ -113,16 +113,17 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             array[record_idx, 6 + 7] = objectPose.orientation.y;
             array[record_idx, 7 + 7] = objectPose.orientation.z;
 
-            float velo = (lastX - objectPose.position.x) * (lastX - objectPose.position.x) + (lastY - objectPose.position.y) * (lastY - objectPose.position.y) + (lastX - objectPose.position.z) * (lastX - objectPose.position.z);
+            // TODO rename velo to RH speed
+            float velo = Mathf.Pow(lastX - objectPose.position.x, 2) + Mathf.Pow(lastY - objectPose.position.y, 2) + Mathf.Pow(lastZ - objectPose.position.z, 2);
             // using Unity's Math package
             velo = Mathf.Pow(velo, 0.5f);
-            velo = velo / (lastTime - array[record_idx, 0]);
+            velo = velo / (curTime - lastTime);
 
             // display some stuff for debug
             // TODO flag this but oh well
             if (true)
             {
-                debugText.text = velo.ToString() + "\n";
+                // debugText.text = "RH spd: " + (Mathf.Round(velo*10)/10).ToString() + "\n";
             }
 
             if (in_peak) {
@@ -140,6 +141,10 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     peak_counter = peak_counter+1;
                     if (peak_counter >= 2) {
                         in_peak = true;
+                        Debug.Log("beat was signaled");
+                        metronomeScheduled.AskForBeat();
+
+                        // TODO schedule a quick turn-off
                         OVRInput.SetControllerVibration(1, 0.1f, OVRInput.Controller.RTouch);
                         peak_counter = 0;
                     }
@@ -147,7 +152,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             }
 
             // Prep for next iter
-            lastTime = array[record_idx, 0]; 
+            lastTime = curTime; 
             // TODO sigh ^
             lastX = objectPose.position.x;
             lastY = objectPose.position.y;
