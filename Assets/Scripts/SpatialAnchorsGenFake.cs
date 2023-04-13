@@ -123,7 +123,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             // TODO flag this but oh well
             if (true)
             {
-                // debugText.text = "RH spd: " + (Mathf.Round(velo*10)/10).ToString() + "\n";
+                debugText.text = "RH spd: " + (Mathf.Round(velo*10)/10).ToString() + "\n";
             }
 
             if (in_peak) {

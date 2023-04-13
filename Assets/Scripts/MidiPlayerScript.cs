@@ -31,6 +31,8 @@ public class MidiPlayerScript : MonoBehaviour
         //     infoMidi += "Count MIDI Events: " + listEvents.Count + "\n";
         //     Debug.Log(infoMidi);
         // }
+
+        midiFilePlayer.MPTK_Play();
     }
 
     // Update is called once per frame
