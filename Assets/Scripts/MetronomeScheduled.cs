@@ -86,7 +86,9 @@ public class MetronomeScheduled : MonoBehaviour {
         scriptName.SetTempo(bpm);
         if (true)
         {
-            debugText.text = "bpm: " + (Mathf.Round((float) bpm*10)/10).ToString() + "\n";
+            debugText.text = "";
+            debugText.text += "Bpm: " + (Mathf.Round((float) bpm*10)/10).ToString() + "\n";
+            debugText.text += "(Raw input: " + (Mathf.Round((float) bpmIntended*10)/10).ToString() + ")\n";
         }
     }
 
