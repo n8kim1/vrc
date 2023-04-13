@@ -27,7 +27,7 @@ public class MidiPlayerScript : MonoBehaviour
 
         mainText.text = "";
         mainText.text += "Controls:" + "\n";
-        mainText.text += "A to start" + "\n";
+        mainText.text += "A to play/pause" + "\n";
 
         // TODO I can't get original tempo to work fsr...
         // Might have to do with timing on load or play or something

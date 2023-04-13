@@ -920,7 +920,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0.1}
-  m_SizeDelta: {x: 5, y: 5}
+  m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &490633829
 MonoBehaviour:
@@ -969,10 +969,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22.05
+  m_fontSize: 12
   m_fontSizeBase: 12
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -2302,6 +2302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   midiFilePlayer: {fileID: 1501458114}
+  mainText: {fileID: 490633829}
 --- !u!114 &1501458114 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114662785300262660, guid: 32a8d8859acf18d4ba134834a876d5ea,
@@ -2637,8 +2638,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0dd37b731f55cc439a46d3adfb74f15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bpm: 140
-  gain: 0.5
 --- !u!65 &1575739342
 BoxCollider:
   m_ObjectHideFlags: 0
