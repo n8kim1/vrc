@@ -28,6 +28,7 @@ public class MidiPlayerScript : MonoBehaviour
         mainText.text = "";
         mainText.text += "Controls:" + "\n";
         mainText.text += "A to play/pause" + "\n";
+        mainText.text += "B to stop and reset" + "\n";
 
         // TODO I can't get original tempo to work fsr...
         // Might have to do with timing on load or play or something
@@ -52,6 +53,7 @@ public class MidiPlayerScript : MonoBehaviour
     void Update()
     {
         // Check for both headset input and laptop-keyboard input (in debugging)
+        // TODO i think i used the wrong hand
         bool playTogglePressed = 
             OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.P);
 
@@ -71,6 +73,26 @@ public class MidiPlayerScript : MonoBehaviour
                 mainText.text = "pausing";
                 isPlaying = false;
             }
+        }
+
+        // TODO i think i used the wrong hand
+        bool resetPressed = 
+            OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.R);
+
+        // TODO pressing R throws an error.
+        // Turns out the R button is hooked up to some other code already lmao
+        // Switch the keyboard button in use to something else
+        if (resetPressed)
+        {
+            Debug.Log("Reset was pressed");
+            // yes, stop method, not reset, as per the package this is what does what we want 
+            // (stops and brings to beginning)
+            midiFilePlayer.MPTK_Stop();
+            mainText.text = "playing";
+            // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
+            // so we have to keep track of this manually.
+            // would be much better if not...
+            isPlaying = false;
         }
         
         if (Input.GetKeyDown(KeyCode.T))
