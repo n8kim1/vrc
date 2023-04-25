@@ -105,6 +105,10 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 peak_counter = peak_counter+1;
                 if (peak_counter >= 2) {
                     in_peak = false;
+                    // Stop vibration since we're not in a peak
+                    // To do this, set amplitude and freq to 0, per docs
+                    OVRInput.SetControllerVibration(0, 0, OVRInput.Controller.RTouch);
+
                     peak_counter  = 0;
                 }
             }
@@ -118,7 +122,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     Debug.Log("beat was signaled");
                     metronomeScheduled.AskForBeat();
 
-                    // TODO schedule a quick turn-off
+                    // Note that vibration stays on until explictly shut off elsewhere
                     OVRInput.SetControllerVibration(1, 0.1f, OVRInput.Controller.RTouch);
                     peak_counter = 0;
                 }
