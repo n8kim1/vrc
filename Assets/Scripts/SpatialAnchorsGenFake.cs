@@ -180,12 +180,15 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         }
     }
 
-    // TODO auto-stop recording leads to weird behavior.
-    // In particular, recording-dump should not prevent the rest of the program from flowing
-    // Eg it stops in the middle of actually doing things.
-    // How to balance with the fact that recording itself should stop at some point?
+    public void StartRecording()
+    {
+        array = new float[len_recording, width_recording];
+        record_idx = 0;
 
-    private void StopRecording()
+        is_recording = true;
+    }
+
+    public void StopRecording()
     {
         is_recording = false;
 
