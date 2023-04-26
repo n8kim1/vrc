@@ -8,6 +8,7 @@ using TMPro;
 public class MidiPlayerScript : MonoBehaviour
 {
     public MidiFilePlayer midiFilePlayer;
+    public SpatialAnchorsGenFake spatialAnchorsGenFake;
 
     public TMP_Text mainText;
 
