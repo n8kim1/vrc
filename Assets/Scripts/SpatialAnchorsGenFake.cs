@@ -76,7 +76,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // TODO consider converting to world coordinates. 
         // Probably unnecessary, just use translations, unless scale is different.
         // What's the diff btwn the two coordinates? Need to google
-        // worldObjectPose = OVRExtensions.ToWorldSpacePose(objectPose);
+        // worldObjectPose = OVRExtensions.ToWorldSpacePose(leftObjectPose);
 
         // sim for right
         rightObjectPose = new OVRPose()
@@ -84,10 +84,11 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch),
             orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch)
         };
+        // worldObjectPose = OVRExtensions.ToWorldSpacePose(rightObjectPose);
 
 
         // TODO rename velo to RH speed
-        float velo = Mathf.Pow(lastX - objectPose.position.x, 2) + Mathf.Pow(lastY - objectPose.position.y, 2) + Mathf.Pow(lastZ - objectPose.position.z, 2);
+        float velo = Mathf.Pow(lastX - rightObjectPose.position.x, 2) + Mathf.Pow(lastY - rightObjectPose.position.y, 2) + Mathf.Pow(lastZ - rightObjectPose.position.z, 2);
         // using Unity's Math package
         velo = Mathf.Pow(velo, 0.5f);
         velo = velo / (curTime - lastTime);
@@ -167,10 +168,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
         // Prep for next iter
         lastTime = curTime; 
-        // TODO sigh ^
-        lastX = objectPose.position.x;
-        lastY = objectPose.position.y;
-        lastZ = objectPose.position.z;
+        lastX = rightObjectPose.position.x;
+        lastY = rightObjectPose.position.y;
+        lastZ = rightObjectPose.position.z;
 
         // Alternatively, for debug, allow for keypresses to simulate signaled beats.
         if (Input.GetKeyDown(KeyCode.Space))
