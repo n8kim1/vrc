@@ -59,9 +59,10 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
         if (is_recording)
         {
-            // check button presses
-            bool trigger1Pressed = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.LTouch);
-            if (trigger1Pressed || (record_idx >= len_recording - 10)) {
+            // 10-frame buffer, to avoid going past the end of the array during the stopping process
+            // User-requesting stopping of recording (via button press) is handled from MidiPlayerScript,
+            // which handles all button inputs
+            if ((record_idx >= len_recording - 10)) {
                 StopRecording();
             }
 
