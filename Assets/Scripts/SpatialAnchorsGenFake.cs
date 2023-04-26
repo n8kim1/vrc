@@ -27,6 +27,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     public TMP_Text displayText;
     public TMP_Text debugText;
 
+    OVRPose leftObjectPose;
+    OVRPose rightObjectPose;
 
     float[,] array = new float[len_recording, width_recording];
     int record_idx = 0;
@@ -61,8 +63,68 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // to fail (something to do with polling too many times)
         // See, eg, https://lab.popul-ar.com/t/ovr-controller-buttons-not-working/1033
         // OVRInput.Update();
+           
+        curTime = Time.time;
 
-        if (is_recording)
+        // Get left position
+        leftObjectPose = new OVRPose()
+        {
+            position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch),
+            orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch)
+        };
+
+        // TODO consider converting to world coordinates. 
+        // Probably unnecessary, just use translations, unless scale is different.
+        // What's the diff btwn the two coordinates? Need to google
+        // worldObjectPose = OVRExtensions.ToWorldSpacePose(objectPose);
+
+        // sim for right
+        rightObjectPose = new OVRPose()
+        {
+            position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch),
+            orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch)
+        };
+
+
+        // TODO rename velo to RH speed
+        float velo = Mathf.Pow(lastX - objectPose.position.x, 2) + Mathf.Pow(lastY - objectPose.position.y, 2) + Mathf.Pow(lastZ - objectPose.position.z, 2);
+        // using Unity's Math package
+        velo = Mathf.Pow(velo, 0.5f);
+        velo = velo / (curTime - lastTime);
+
+        // display some stuff for debug
+        // TODO flag this but oh well
+        if (true)
+        {
+            debugText.text = "RH spd: " + (Mathf.Round(velo*10)/10).ToString() + "\n";
+        }
+
+        if (in_peak) {
+            if (velo < 1.5) {
+                peak_counter = peak_counter+1;
+                if (peak_counter >= 2) {
+                    in_peak = false;
+                    peak_counter  = 0;
+                }
+            }
+        }
+
+        else {
+            if (velo > 1.5) {
+                peak_counter = peak_counter+1;
+                if (peak_counter >= 2) {
+                    in_peak = true;
+                    Debug.Log("beat was signaled");
+                    metronomeScheduled.AskForBeat();
+
+                    // TODO schedule a quick turn-off
+                    OVRInput.SetControllerVibration(1, 0.1f, OVRInput.Controller.RTouch);
+                    peak_counter = 0;
+                }
+            }
+        }
+
+        if (is_recording) 
         {
             // 10-frame buffer, to avoid going past the end of the array during the stopping process
             // User-requesting stopping of recording (via button press) is handled from MidiPlayerScript,
@@ -71,113 +133,51 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 StopRecording();
             }
 
-            // TODO conside building each row of array incrementally
+             // TODO conside building each row of array incrementally
             // eg 
             // row[0] = Time.time
             // ...
             // array[record_idx] = row
             // Might be helpful for performance
-
-            curTime = Time.time;
             array[record_idx, 0] = curTime;
-
-            // Get left position
-            OVRPose objectPose = new OVRPose()
-            {
-                position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch),
-                orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch)
-            };
-
-            // TODO consider converting to world coordinates. 
-            // Probably unnecessary, just use translations, unless scale is different.
-            // What's the diff btwn the two coordinates? Need to google
-            // worldObjectPose = OVRExtensions.ToWorldSpacePose(objectPose);
 
             // TODO consider saving a row directly.
             // Depends on if position can be exposed as a row, 
             // and then also this probably requires 4 distinct arrays 
             // cuz destructring hard.
-            array[record_idx, 1] = objectPose.position.x;
-            array[record_idx, 2] = objectPose.position.y;
-            array[record_idx, 3] = objectPose.position.z;
-            array[record_idx, 4] = objectPose.orientation.w;
-            array[record_idx, 5] = objectPose.orientation.x;
-            array[record_idx, 6] = objectPose.orientation.y;
-            array[record_idx, 7] = objectPose.orientation.z;
+            array[record_idx, 1] = leftObjectPose.position.x;
+            array[record_idx, 2] = leftObjectPose.position.y;
+            array[record_idx, 3] = leftObjectPose.position.z;
+            array[record_idx, 4] = leftObjectPose.orientation.w;
+            array[record_idx, 5] = leftObjectPose.orientation.x;
+            array[record_idx, 6] = leftObjectPose.orientation.y;
+            array[record_idx, 7] = leftObjectPose.orientation.z;
 
-
-            // sim for right
-            objectPose = new OVRPose()
-            {
-                position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch),
-                orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch)
-            };
-            array[record_idx, 1 + 7] = objectPose.position.x;
-            array[record_idx, 2 + 7] = objectPose.position.y;
-            array[record_idx, 3 + 7] = objectPose.position.z;
-            array[record_idx, 4 + 7] = objectPose.orientation.w;
-            array[record_idx, 5 + 7] = objectPose.orientation.x;
-            array[record_idx, 6 + 7] = objectPose.orientation.y;
-            array[record_idx, 7 + 7] = objectPose.orientation.z;
-
-            // TODO rename velo to RH speed
-            float velo = Mathf.Pow(lastX - objectPose.position.x, 2) + Mathf.Pow(lastY - objectPose.position.y, 2) + Mathf.Pow(lastZ - objectPose.position.z, 2);
-            // using Unity's Math package
-            velo = Mathf.Pow(velo, 0.5f);
-            velo = velo / (curTime - lastTime);
-
-            // display some stuff for debug
-            // TODO flag this but oh well
-            if (true)
-            {
-                debugText.text = "RH spd: " + (Mathf.Round(velo*10)/10).ToString() + "\n";
-            }
-
-            if (in_peak) {
-                if (velo < 1.5) {
-                    peak_counter = peak_counter+1;
-                    if (peak_counter >= 2) {
-                        in_peak = false;
-                        peak_counter  = 0;
-                    }
-                }
-            }
-
-            else {
-                if (velo > 1.5) {
-                    peak_counter = peak_counter+1;
-                    if (peak_counter >= 2) {
-                        in_peak = true;
-                        Debug.Log("beat was signaled");
-                        metronomeScheduled.AskForBeat();
-
-                        // TODO schedule a quick turn-off
-                        OVRInput.SetControllerVibration(1, 0.1f, OVRInput.Controller.RTouch);
-                        peak_counter = 0;
-                    }
-                }
-            }
-
-            // Prep for next iter
-            lastTime = curTime; 
-            // TODO sigh ^
-            lastX = objectPose.position.x;
-            lastY = objectPose.position.y;
-            lastZ = objectPose.position.z;
-
-            // Alternatively, for debug, allow for keypresses to simulate signaled beats.
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Debug.Log("space key was pressed");
-                metronomeScheduled.AskForBeat();
-
-            }
+            array[record_idx, 1 + 7] = rightObjectPose.position.x;
+            array[record_idx, 2 + 7] = rightObjectPose.position.y;
+            array[record_idx, 3 + 7] = rightObjectPose.position.z;
+            array[record_idx, 4 + 7] = rightObjectPose.orientation.w;
+            array[record_idx, 5 + 7] = rightObjectPose.orientation.x;
+            array[record_idx, 6 + 7] = rightObjectPose.orientation.y;
+            array[record_idx, 7 + 7] = rightObjectPose.orientation.z;
 
             // prep for the next loop
             record_idx += 1;
         }
 
+        // Prep for next iter
+        lastTime = curTime; 
+        // TODO sigh ^
+        lastX = objectPose.position.x;
+        lastY = objectPose.position.y;
+        lastZ = objectPose.position.z;
 
+        // Alternatively, for debug, allow for keypresses to simulate signaled beats.
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("space key was pressed");
+            metronomeScheduled.AskForBeat();
+        }
     }
 
     // TODO auto-stop recording leads to weird behavior.
