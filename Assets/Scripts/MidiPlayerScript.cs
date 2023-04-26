@@ -27,8 +27,8 @@ public class MidiPlayerScript : MonoBehaviour
 
         mainText.text = "";
         mainText.text += "Controls:" + "\n";
-        mainText.text += "A to play/pause" + "\n";
-        mainText.text += "B to stop and reset" + "\n";
+        mainText.text += "X to play/pause" + "\n";
+        mainText.text += "Y to stop and reset" + "\n";
 
         // TODO I can't get original tempo to work fsr...
         // Might have to do with timing on load or play or something
@@ -75,7 +75,6 @@ public class MidiPlayerScript : MonoBehaviour
             }
         }
 
-        // TODO i think i used the wrong hand
         bool resetPressed = 
             OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.R);
 
