@@ -55,7 +55,12 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     /// </summary>
     void Update()
     {
-        OVRInput.Update();
+        // Do _not_ call OVRInput.Update
+        // since it's already called in the OVRManager, 
+        // and multiple calls to it prevent GetDown, GetUp, and other frame-specific methods
+        // to fail (something to do with polling too many times)
+        // See, eg, https://lab.popul-ar.com/t/ovr-controller-buttons-not-working/1033
+        // OVRInput.Update();
 
         if (is_recording)
         {

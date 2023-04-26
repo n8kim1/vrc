@@ -52,8 +52,14 @@ public class MidiPlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Do _not_ call OVRInput.Update
+        // since it's already called in the OVRManager, 
+        // and multiple calls to it prevent GetDown, GetUp, and other frame-specific methods
+        // to fail (something to do with polling too many times)
+        // See, eg, https://lab.popul-ar.com/t/ovr-controller-buttons-not-working/1033
+        // OVRInput.Update();
+
         // Check for both headset input and laptop-keyboard input (in debugging)
-        // TODO i think i used the wrong hand
         bool playTogglePressed = 
             OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.P);
 
