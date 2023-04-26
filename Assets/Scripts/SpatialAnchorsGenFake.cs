@@ -195,13 +195,14 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.LTouch);
         displayText.text = "Stopping...";
 
+        // TODO filename should have YMD as well. 
+        // I haven't really cared cuz I can observe file details in Explorer,
+        // but it's more efficient
         string fname = System.DateTime.Now.ToString("HH-mm-ss") + ".csv";
         string path = Path.Combine(Application.persistentDataPath, fname);
         StreamWriter file = new StreamWriter(path);
 
-        // TODO -10 is a buffer in case frame updates late.
-        // I'm not actually sure it's needed tho.
-        for (int i = 0; i < len_recording - 10; i++)
+        for (int i = 0; i < len_recording; i++)
         {
             for (int j = 0; j < width_recording; j++)
             {
@@ -212,8 +213,12 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         }
         file.Close();
 
+        // To access recording, connect to laptop
+        // TODO could use better more detailed instructions
+        // TODO could also display the path, too
+        displayText.text = "Dumped recording!";
+        Debug.Log("Recording path:" +  path);
 
-        // TODO i wonder where this is being dumped on laptop?
-        displayText.text = "Dumped recording, hopefully!";
+        
     }
 }
