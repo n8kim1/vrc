@@ -69,7 +69,9 @@ public class MidiPlayerScript : MonoBehaviour
             Debug.Log("Play input was pressed");
             if (!isPlaying) {
                 midiFilePlayer.MPTK_Play();
+                spatialAnchorsGenFake.StartRecording();
                 mainText.text = "playing";
+
                 // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
                 // so we have to keep track of this manually.
                 // would be much better if not...
@@ -77,7 +79,7 @@ public class MidiPlayerScript : MonoBehaviour
             }
             else {
                 midiFilePlayer.MPTK_Pause();
-                mainText.text = "pausing";
+                mainText.text = "pausing...";
                 isPlaying = false;
             }
         }
@@ -91,10 +93,14 @@ public class MidiPlayerScript : MonoBehaviour
         if (resetPressed)
         {
             Debug.Log("Reset was pressed");
+            mainText.text = "resetting...";
+
             // yes, stop method, not reset, as per the package this is what does what we want 
             // (stops and brings to beginning)
             midiFilePlayer.MPTK_Stop();
-            mainText.text = "playing";
+
+            spatialAnchorsGenFake.StopRecording();
+
             // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
             // so we have to keep track of this manually.
             // would be much better if not...
