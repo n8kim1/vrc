@@ -34,6 +34,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     int record_idx = 0;
     bool is_recording = false;
 
+    float velo_threshold_high = 1.5f;
     bool in_peak = false;
     int peak_counter = 0;
     float curTime = 0;
@@ -93,15 +94,26 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         velo = Mathf.Pow(velo, 0.5f);
         velo = velo / (curTime - lastTime);
 
+        if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickUp) || Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            velo_threshold_high += 0.01f;
+            Debug.Log(velo_threshold_high);
+        }
+        if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickDown) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            velo_threshold_high -= 0.01f;
+        }
+
         // display some stuff for debug
         // TODO flag this but oh well
         if (true)
         {
-            debugText.text = "RH spd: " + (Mathf.Round(velo*10)/10).ToString() + "\n";
+            debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
+            debugText.text += "RH spd thresh: " + velo_threshold_high.ToString() + "\n";
         }
 
         if (in_peak) {
-            if (velo < 1.5) {
+            if (velo < velo_threshold_high) {
                 peak_counter = peak_counter+1;
                 if (peak_counter >= 2) {
                     in_peak = false;
@@ -115,7 +127,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         }
 
         else {
-            if (velo > 1.5) {
+            if (velo > velo_threshold_high) {
                 peak_counter = peak_counter+1;
                 if (peak_counter >= 2) {
                     in_peak = true;

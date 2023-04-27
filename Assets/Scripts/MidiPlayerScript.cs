@@ -30,6 +30,8 @@ public class MidiPlayerScript : MonoBehaviour
         mainText.text += "Controls:" + "\n";
         mainText.text += "X to play/pause" + "\n";
         mainText.text += "Y to stop and reset" + "\n";
+        mainText.text += "LH stick up/down to adjust beat detection sensitivity" + "\n";
+
 
         // TODO I can't get original tempo to work fsr...
         // Might have to do with timing on load or play or something
