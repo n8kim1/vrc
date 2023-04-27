@@ -123,7 +123,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     metronomeScheduled.AskForBeat();
 
                     // Note that vibration stays on until explictly shut off elsewhere
-                    OVRInput.SetControllerVibration(1, 0.1f, OVRInput.Controller.RTouch);
+                    // TODO 0.2f is amplitude, the strength of vibration.
+                    // Would be nice to make this controllable
+                    OVRInput.SetControllerVibration(1, 0.2f, OVRInput.Controller.RTouch);
                     peak_counter = 0;
                 }
             }
