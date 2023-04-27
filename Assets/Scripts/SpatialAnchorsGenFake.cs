@@ -105,12 +105,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         }
 
         // display some stuff for debug
-        // TODO flag this but oh well
-        if (true)
-        {
-            debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
-            debugText.text += "RH spd thresh: " + velo_threshold_high.ToString() + "\n";
-        }
+        debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
+        debugText.text += "RH spd thresh: " + velo_threshold_high.ToString() + "\n";
+        // TODO display fps
 
         if (in_peak) {
             if (velo < velo_threshold_high) {
