@@ -112,6 +112,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         if (in_peak) {
             if (velo < velo_threshold_high) {
                 peak_counter = peak_counter+1;
+                // TODO make the 2 a variable, possibly configurable in program too
                 if (peak_counter >= 2) {
                     in_peak = false;
                     // Stop vibration since we're not in a peak
@@ -126,6 +127,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         else {
             if (velo > velo_threshold_high) {
                 peak_counter = peak_counter+1;
+                // TODO make the 2 a variable, possibly configurable in program too
                 if (peak_counter >= 2) {
                     in_peak = true;
                     Debug.Log("beat was signaled");
