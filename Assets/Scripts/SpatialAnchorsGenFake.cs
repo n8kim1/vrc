@@ -81,7 +81,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // TODO should really crank out a notebook for this, since it'd be good to write about
         if ((curTime - lastTime) < frameskip_time_threshold)
         {
-            debugText.text = "frame dropped!";
+            // debugText.text = "frame dropped!";
             return;
         }
 
@@ -126,7 +126,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // display some stuff for debug
         debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
         debugText.text += "RH spd thresh: " + velo_threshold_high.ToString() + "\n";
-        debugText.text += "timeskip thresh: " + frameskip_time_threshold;
+        // debugText.text += "timeskip thresh: " + frameskip_time_threshold;
         // TODO display fps
 
         if (in_peak) {
