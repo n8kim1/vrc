@@ -43,6 +43,10 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     float lastY = 0;
     float lastZ = 0;
 
+    // Adjust the "4" as necessary; kinda arbitrary
+    float frameskip_time_threshold = 1 / (framerate + 0.0f) / 4;
+    // Note the "conversion" to a float. A cast would work too
+
     // references to metronome stuff
     public MetronomeScheduled metronomeScheduled;
 
@@ -66,6 +70,21 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // OVRInput.Update();
            
         curTime = Time.time;
+
+        // If the current update frame is too close in time to the previous one,
+        // then we need to handle it nicely. 
+        // (For example, naively, if two frames have the same timestamp, then 
+        // the time delta is 0, and speeds are infinite, which is weird.)
+        // The simple way is to pretend the frame doesn't exist.
+        // More robust fix would involve still recording, or etc
+        // Also would need to investigate the lengths of frames that seem odd
+        // TODO should really crank out a notebook for this, since it'd be good to write about
+        if ((curTime - lastTime) < frameskip_time_threshold)
+        {
+            debugText.text = "frame dropped!";
+            return;
+        }
+
 
         // Get left position
         leftObjectPose = new OVRPose()
@@ -107,6 +126,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // display some stuff for debug
         debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
         debugText.text += "RH spd thresh: " + velo_threshold_high.ToString() + "\n";
+        debugText.text += "timeskip thresh: " + frameskip_time_threshold;
         // TODO display fps
 
         if (in_peak) {
