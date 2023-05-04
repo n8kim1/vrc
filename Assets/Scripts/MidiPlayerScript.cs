@@ -149,7 +149,11 @@ public class MidiPlayerScript : MonoBehaviour
             currentTick = midiFilePlayer.MPTK_TickCurrent;
             if (currentTick > lastTick) {
                 currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
-                Debug.Log("q: " + currentQuarter);
+                Debug.Log("q: " + currentQuarter); 
+                // TODO turn this into beat and measure, math should be simple
+                // TODO it's annoying to show . of a beat. Drop this. 
+                // Maybe ask around and try different things
+                mainText.text = "q: " + currentQuarter;
                 lastTick = currentTick;
             }
 
