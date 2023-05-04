@@ -1619,6 +1619,7 @@ MonoBehaviour:
   displayText: {fileID: 490633829}
   debugText: {fileID: 11498998}
   metronomeScheduled: {fileID: 1631814693}
+  midiPlayerScript: {fileID: 1466554765}
   colorChanger: {fileID: 623537595}
 --- !u!1 &832575517
 GameObject:

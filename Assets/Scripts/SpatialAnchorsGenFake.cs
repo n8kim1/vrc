@@ -48,7 +48,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // Note the "conversion" to a float. A cast would work too
 
     // references to other objcts, scripts, etc
+
     public MetronomeScheduled metronomeScheduled;
+    public MidiPlayerScript midiPlayerScript;
     public ColorChanger colorChanger;
 
 
@@ -136,6 +138,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 // TODO make the 2 a variable, possibly configurable in program too
                 if (peak_counter >= 2) {
                     in_peak = false;
+
+                    midiPlayerScript.SetVolume(0.5f);
+
                     // Stop vibration since we're not in a peak
                     // To do this, set amplitude and freq to 0, per docs
                     OVRInput.SetControllerVibration(0, 0, OVRInput.Controller.RTouch);
@@ -153,7 +158,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 if (peak_counter >= 2) {
                     in_peak = true;
                     Debug.Log("beat was signaled");
+
                     metronomeScheduled.AskForBeat();
+                    midiPlayerScript.SetVolume(1.0f);
 
                     // Note that vibration stays on until explictly shut off elsewhere
                     // TODO 0.2f is amplitude, the strength of vibration.
@@ -218,12 +225,14 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         {
             Debug.Log("space key was pressed");
             metronomeScheduled.AskForBeat();
+            midiPlayerScript.SetVolume(1.0f);
             colorChanger.SetBlue();
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
             // cubeMaterial.color = Color.green;
+            midiPlayerScript.SetVolume(0.5f);
             colorChanger.SetGray();
         }
     }
