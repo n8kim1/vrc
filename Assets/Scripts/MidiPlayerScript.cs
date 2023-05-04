@@ -15,6 +15,17 @@ public class MidiPlayerScript : MonoBehaviour
 
     bool isPlaying = false;
 
+    // For computing beat/measure within piece
+    long tickFirstNote;
+    // This is float (not long, as is given by the MIDI player)
+    // in order to enable offbeat division
+    float ticksPerQuarter;
+    long currentTick;
+    // Float, so decimals can be nicely displayed
+    float currentQuarter;
+    // To only update on demand
+    long lastTick = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +37,11 @@ public class MidiPlayerScript : MonoBehaviour
         // TODO better queueing mechanism.
         // Right now it's like "start beats and then play when you're ready!"
         midiFilePlayer.MPTK_StartPlayAtFirstNote = true;
+
+        // These values are set to 0 before the midi player begins
+        // so don't read them yet
+        // ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
+        // tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
 
         // Initialize text
         // Perhaps inefficient, but eh it's only run once
@@ -75,7 +91,14 @@ public class MidiPlayerScript : MonoBehaviour
             Debug.Log("Play input was pressed");
             if (!isPlaying) {
                 midiFilePlayer.MPTK_Play();
+
+                // Get tempo-related values, which now hold valid data,
+                // now that we're playing
+                ticksPerQuarter = (float) midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
+                tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
+
                 spatialAnchorsGenFake.StartRecording();
+
                 mainText.text = "playing";
 
                 // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
@@ -117,6 +140,19 @@ public class MidiPlayerScript : MonoBehaviour
         {
             Debug.Log("t key was pressed, slowing tempo");
             midiFilePlayer.MPTK_Tempo *= 0.7;
+        }
+
+        if (isPlaying) {
+            // Display things
+            // TODO should display, or handling buttons, come first?
+            // Is there a better practice? Eran might know??
+            currentTick = midiFilePlayer.MPTK_TickCurrent;
+            if (currentTick > lastTick) {
+                currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
+                Debug.Log("q: " + currentQuarter);
+                lastTick = currentTick;
+            }
+
         }
     }
 
