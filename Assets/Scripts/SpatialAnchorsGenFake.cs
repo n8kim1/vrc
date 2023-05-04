@@ -47,14 +47,24 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     float frameskip_time_threshold = 1 / (framerate + 0.0f) / 4;
     // Note the "conversion" to a float. A cast would work too
 
-    // references to metronome stuff
+    // references to other objcts, scripts, etc
     public MetronomeScheduled metronomeScheduled;
+    public GameObject playerResponseCube;
+    public Renderer playerResponseCubeRenderer;
+    public Material cubeMaterial;
+    public ColorChanger colorChanger;
 
 
     void Start() {
         is_recording = true;
 
         OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
+
+        // Load up some references        
+        // Get the Renderer component from the new cube
+        playerResponseCubeRenderer = playerResponseCube.GetComponent<Renderer>();
+
+        // public cubeMaterial = 
     }
 
     /// <summary>
@@ -138,6 +148,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     // Stop vibration since we're not in a peak
                     // To do this, set amplitude and freq to 0, per docs
                     OVRInput.SetControllerVibration(0, 0, OVRInput.Controller.RTouch);
+                    colorChanger.SetGray();
 
                     peak_counter  = 0;
                 }
@@ -157,6 +168,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     // TODO 0.2f is amplitude, the strength of vibration.
                     // Would be nice to make this controllable
                     OVRInput.SetControllerVibration(1, 0.2f, OVRInput.Controller.RTouch);
+                    colorChanger.SetBlue();
+
                     peak_counter = 0;
                 }
             }
@@ -214,6 +227,14 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         {
             Debug.Log("space key was pressed");
             metronomeScheduled.AskForBeat();
+            Debug.Log(playerResponseCubeRenderer);
+            colorChanger.SetBlue();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            // cubeMaterial.color = Color.green;
+            colorChanger.SetGray();
         }
     }
 
