@@ -1153,6 +1153,7 @@ MonoBehaviour:
   midiFilePlayer: {fileID: 1501458114}
   spatialAnchorsGenFake: {fileID: 823873140}
   mainText: {fileID: 490633829}
+  bottomText: {fileID: 0}
 --- !u!65 &623537591
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2587,6 +2588,7 @@ MonoBehaviour:
   midiFilePlayer: {fileID: 1501458114}
   spatialAnchorsGenFake: {fileID: 823873140}
   mainText: {fileID: 490633829}
+  bottomText: {fileID: 1896253786}
 --- !u!114 &1501458114 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114662785300262660, guid: 32a8d8859acf18d4ba134834a876d5ea,

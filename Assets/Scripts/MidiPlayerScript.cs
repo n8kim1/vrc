@@ -11,6 +11,7 @@ public class MidiPlayerScript : MonoBehaviour
     public SpatialAnchorsGenFake spatialAnchorsGenFake;
 
     public TMP_Text mainText;
+    public TMP_Text bottomText;
 
     bool isPlaying = false;
 
@@ -26,11 +27,14 @@ public class MidiPlayerScript : MonoBehaviour
         // Right now it's like "start beats and then play when you're ready!"
         midiFilePlayer.MPTK_StartPlayAtFirstNote = true;
 
-        mainText.text = "";
-        mainText.text += "Controls:" + "\n";
-        mainText.text += "X to play/pause" + "\n";
-        mainText.text += "Y to stop and reset" + "\n";
-        mainText.text += "LH stick up/down to adjust beat detection sensitivity" + "\n";
+        // Initialize text
+        // Perhaps inefficient, but eh it's only run once
+        mainText.text = "Welcome!";
+        bottomText.text = "";
+        bottomText.text += "Controls:" + "\n";
+        bottomText.text += "X to play/pause" + "\n";
+        bottomText.text += "Y to stop and reset" + "\n";
+        bottomText.text += "LH stick up/down to adjust beat detection sensitivity" + "\n";
 
 
         // TODO I can't get original tempo to work fsr...
