@@ -39,6 +39,8 @@ public class MidiPlayerScript : MonoBehaviour
         // Right now it's like "start beats and then play when you're ready!"
         midiFilePlayer.MPTK_StartPlayAtFirstNote = true;
 
+        midiFilePlayer.MPTK_Volume = 0.5f;
+
         // These values are set to 0 before the midi player begins
         // so don't read them yet
         // ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
@@ -168,6 +170,10 @@ public class MidiPlayerScript : MonoBehaviour
     {
         midiFilePlayer.MPTK_Tempo = tempo;
         Debug.Log("tempo set in MidiPlayerScript");
+    }
+
+    public void SetVolume(float volume){
+        midiFilePlayer.MPTK_Volume = volume;
     }
 
     // To test whether this is being called anyways
