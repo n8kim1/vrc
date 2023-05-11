@@ -30,6 +30,11 @@ public class MidiPlayerScript : MonoBehaviour
     // For representing state of accent and playing them
     bool is_accent = false;
     HashSet<long> accentBeats = new HashSet<long>();
+    // TODO I'm not sure whether we should be doing math in beats or ticks as the standard unit
+    // Beats is more intuitive, but demands more frequent converstions on the fly
+    // which is bad for FPS
+    // (since on the fly we easily have ticks)
+    long beat_accent_signaled = -2;
 
     // Start is called before the first frame update
     void Start()
@@ -196,28 +201,29 @@ public class MidiPlayerScript : MonoBehaviour
     }
 
  
+    public void SignalAccent () {
+        long currentBeat = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
+        beat_accent_signaled = currentBeat;
+    }
+
     void OnMidiEvent (MPTKEvent midiEvent)
     {
         switch (midiEvent.Command)
         {
             case MPTKCommand.NoteOn:
                 long currentTick2 = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
-                if (accentBeats.Contains(currentTick2)) {
-                    midiEvent.Velocity = 127*8;
+                if (accentBeats.Contains(currentTick2) && (currentTick2 - beat_accent_signaled <= 1.5)) {
+                        midiEvent.Velocity = 127;
+                    }
+                else {
+                    // To keep the overall piece quieter, so that accents stand out
+                    midiEvent.Velocity = midiEvent.Velocity / 2;
                 }
-
                 // Note that velocity in MIDI ranges from 0 to 127;
                 // setting the variable to an int above 127
                 // makes the synth produce nothing
 
-                // Debug.Log("NoteOn! Orig velo: " + midiEvent.Velocity);
-                if (is_accent) {
-                    midiEvent.Velocity = 127;
-                }
-                else {
-                    // To keep the overall piece quieter, so that accents stand out
-                    midiEvent.Velocity = midiEvent.Velocity / 8;
-                }
+                Debug.Log(midiEvent.Velocity);
 
             break;
         }
