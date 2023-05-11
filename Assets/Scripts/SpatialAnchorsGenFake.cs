@@ -214,6 +214,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 if (peak_counter_accent >= 2) {
                     in_peak_accent = true;
                     peak_counter_accent = 0;
+
+                    midiPlayerScript.SignalAccent();
                     Debug.Log("Accent requested");
 
                     // TODO remove the following when debug:
@@ -283,6 +285,13 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             // cubeMaterial.color = Color.green;
             midiPlayerScript.SetVolume(0.5f);
             colorChanger.SetGray();
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Debug.Log("a key was pressed");
+            midiPlayerScript.SignalAccent();
+            colorChanger.SetRed();
         }
     }
 
