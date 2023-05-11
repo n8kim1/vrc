@@ -190,7 +190,19 @@ public class MidiPlayerScript : MonoBehaviour
         switch (midiEvent.Command)
         {
             case MPTKCommand.NoteOn:
-                Debug.Log("NoteOn!");
+                // Note that velocity in MIDI ranges from 0 to 127;
+                // setting the variable to an int above 127
+                // makes the synth produce nothing
+
+                // Debug.Log("NoteOn! Orig velo: " + midiEvent.Velocity);
+                if (is_accent) {
+                    midiEvent.Velocity = 127;
+                }
+                else {
+                    // To keep the overall piece quieter, so that accents stand out
+                    midiEvent.Velocity = midiEvent.Velocity / 8;
+                }
+
             break;
         }
     }
