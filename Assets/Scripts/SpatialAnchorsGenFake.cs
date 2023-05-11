@@ -47,6 +47,11 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     float velo_threshold_accent = 3.0f;
 
     // TODO check the threshold on the beat just before the accent beat
+    // TODO would need to somehow know on the beat _beforehand_ to accent.
+    // Perhaps check if the gestures cross the velo threshold significantly early.
+    // Or, could always pass in whenever it's crossed, to the midi player
+    // since scheduling the midi player to check on beat is hard.
+    // Easier to go "accent detected -> right time" than vv???
 
     // For computations about velocity, etc
     float curTime = 0;
