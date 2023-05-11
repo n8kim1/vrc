@@ -128,12 +128,11 @@ public class MidiPlayerScript : MonoBehaviour
             // (stops and brings to beginning)
             midiFilePlayer.MPTK_Stop();
 
-            spatialAnchorsGenFake.StopRecording();
-
             // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
             // so we have to keep track of this manually.
             // would be much better if not...
             isPlaying = false;
+            spatialAnchorsGenFake.StopRecording();
         }
         
         if (Input.GetKeyDown(KeyCode.T))
