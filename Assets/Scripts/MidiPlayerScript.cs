@@ -41,6 +41,8 @@ public class MidiPlayerScript : MonoBehaviour
 
         midiFilePlayer.MPTK_Volume = 0.5f;
 
+        midiFilePlayer.OnMidiEvent = OnMidiEvent;
+
         // These values are set to 0 before the midi player begins
         // so don't read them yet
         // ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
@@ -180,5 +182,16 @@ public class MidiPlayerScript : MonoBehaviour
     public void PrintDebug()
     {
         Debug.Log("printdebug called");
+    }
+
+ 
+    void OnMidiEvent (MPTKEvent midiEvent)
+    {
+        switch (midiEvent.Command)
+        {
+            case MPTKCommand.NoteOn:
+                Debug.Log("NoteOn!");
+            break;
+        }
     }
 }
