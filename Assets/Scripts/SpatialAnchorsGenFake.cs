@@ -45,6 +45,10 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // Should this only consider y-dir? 
     // Wait this makes no sense for beats that aren't beat 1, right?
     float velo_threshold_accent = 3.0f;
+    // TODO if accents remain using a debounced peak detector,
+    // this should probably be refactored into some reusable code
+    bool in_peak_accent = false;
+    int peak_counter_accent = 0;
 
     // TODO check the threshold on the beat just before the accent beat
     // TODO would need to somehow know on the beat _beforehand_ to accent.
@@ -149,6 +153,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // debugText.text += "timeskip thresh: " + frameskip_time_threshold;
         // TODO display fps
 
+        // Check hand velocity to see if a beat is being signaled.
         if (in_peak) {
             if (velo < velo_threshold_high) {
                 peak_counter = peak_counter+1;
@@ -186,6 +191,33 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     colorChanger.SetBlue();
 
                     peak_counter = 0;
+                }
+            }
+        }
+
+        // Check hand velocity to see if an accented beat is being signaled.
+        if (in_peak_accent) {
+            if (velo < velo_threshold_accent) {
+                peak_counter_accent = peak_counter_accent+1;
+                // TODO make the 2 a variable, possibly configurable in program too
+                if (peak_counter_accent >= 2) {
+                    in_peak_accent = false;
+                    peak_counter_accent = 0;
+                }
+            }
+        }
+
+        else {
+            if (velo > velo_threshold_accent) {
+                peak_counter_accent = peak_counter_accent+1;
+                // TODO make the 2 a variable, possibly configurable in program too
+                if (peak_counter_accent >= 2) {
+                    in_peak_accent = true;
+                    peak_counter_accent = 0;
+                    Debug.Log("Accent requested");
+
+                    // TODO remove the following when debug:
+                    colorChanger.SetRed();
                 }
             }
         }
