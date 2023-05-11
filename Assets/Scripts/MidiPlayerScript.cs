@@ -19,13 +19,17 @@ public class MidiPlayerScript : MonoBehaviour
     long tickFirstNote;
     // This is float (not long, as is given by the MIDI player)
     // in order to enable offbeat division
-    float ticksPerQuarter;
+    long ticksPerQuarter;
     long currentTick;
     // Float, so decimals can be nicely displayed
     float currentQuarter;
     // To only update on demand. 
     // Note that it starts at -1, so that beat 0 displays afresh.
     long lastTick = -1;
+
+    // For representing state of accent and playing them
+    bool is_accent = false;
+    HashSet<long> accentBeats = new HashSet<long>();
 
     // Start is called before the first frame update
     void Start()
@@ -57,6 +61,13 @@ public class MidiPlayerScript : MonoBehaviour
         bottomText.text += "Y to stop and reset" + "\n";
         bottomText.text += "LH stick up/down to adjust beat detection sensitivity" + "\n";
 
+        accentBeats.Add(0);
+        accentBeats.Add(2);
+        accentBeats.Add(4);
+        accentBeats.Add(8);
+        accentBeats.Add(10);
+        accentBeats.Add(12);
+        accentBeats.Add(16);
 
         // TODO I can't get original tempo to work fsr...
         // Might have to do with timing on load or play or something
@@ -99,7 +110,7 @@ public class MidiPlayerScript : MonoBehaviour
 
                 // Get tempo-related values, which now hold valid data,
                 // now that we're playing
-                ticksPerQuarter = (float) midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
+                ticksPerQuarter = (long) midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
                 tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
 
                 spatialAnchorsGenFake.StartRecording();
@@ -190,6 +201,11 @@ public class MidiPlayerScript : MonoBehaviour
         switch (midiEvent.Command)
         {
             case MPTKCommand.NoteOn:
+                long currentTick2 = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
+                if (accentBeats.Contains(currentTick2)) {
+                    midiEvent.Velocity = 127*8;
+                }
+
                 // Note that velocity in MIDI ranges from 0 to 127;
                 // setting the variable to an int above 127
                 // makes the synth produce nothing
