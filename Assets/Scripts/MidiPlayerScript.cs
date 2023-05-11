@@ -23,8 +23,9 @@ public class MidiPlayerScript : MonoBehaviour
     long currentTick;
     // Float, so decimals can be nicely displayed
     float currentQuarter;
-    // To only update on demand
-    long lastTick = 0;
+    // To only update on demand. 
+    // Note that it starts at -1, so that beat 0 displays afresh.
+    long lastTick = -1;
 
     // Start is called before the first frame update
     void Start()
@@ -132,6 +133,10 @@ public class MidiPlayerScript : MonoBehaviour
             // so we have to keep track of this manually.
             // would be much better if not...
             isPlaying = false;
+
+            // To make the beat still display upon restart
+            lastTick = -1;
+
             spatialAnchorsGenFake.StopRecording();
         }
         
