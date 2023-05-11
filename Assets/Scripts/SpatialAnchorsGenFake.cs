@@ -34,9 +34,21 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     int record_idx = 0;
     bool is_recording = false;
 
+    // Thresholds for defining "high" velocity
+    // for acceleration-maxes, beat signals, accents, etc
     float velo_threshold_high = 1.5f;
+    // (this is velo peak)
     bool in_peak = false;
     int peak_counter = 0;
+
+    // Should this be accel?
+    // Should this only consider y-dir? 
+    // Wait this makes no sense for beats that aren't beat 1, right?
+    float velo_threshold_accent = 3.0f;
+
+    // TODO check the threshold on the beat just before the accent beat
+
+    // For computations about velocity, etc
     float curTime = 0;
     float lastTime = 0;
     float lastX = 0;
