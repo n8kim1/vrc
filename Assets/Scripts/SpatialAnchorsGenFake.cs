@@ -264,7 +264,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // To access recording, connect to laptop
         // TODO could use better more detailed instructions
         // TODO could also display the path, too
-        displayText.text = "Dumped recording!";
+        displayText.text = "Saved recording!";
         Debug.Log("Recording path:" +  path);
 
         
