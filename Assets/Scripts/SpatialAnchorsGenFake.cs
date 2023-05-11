@@ -161,7 +161,6 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 if (peak_counter >= 2) {
                     in_peak = false;
 
-                    midiPlayerScript.SetVolume(0.5f);
 
                     // Stop vibration since we're not in a peak
                     // To do this, set amplitude and freq to 0, per docs
@@ -182,7 +181,6 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                     Debug.Log("beat was signaled");
 
                     metronomeScheduled.AskForBeat();
-                    midiPlayerScript.SetVolume(1.0f);
 
                     // Note that vibration stays on until explictly shut off elsewhere
                     // TODO 0.2f is amplitude, the strength of vibration.
