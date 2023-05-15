@@ -40,6 +40,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // (this is velo peak)
     bool in_peak = false;
     int peak_counter = 0;
+    int peak_rising_edge_threshold_frames = 2;
+    int peak_falling_edge_threshold_frames = 2;
 
     // Should this be accel?
     // Should this only consider y-dir? 
@@ -157,8 +159,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         if (in_peak) {
             if (velo < velo_threshold_high) {
                 peak_counter = peak_counter+1;
-                // TODO make the 2 a variable, possibly configurable in program too
-                if (peak_counter >= 2) {
+                if (peak_counter >= peak_falling_edge_threshold_frames) {
                     in_peak = false;
 
 
@@ -175,8 +176,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         else {
             if (velo > velo_threshold_high) {
                 peak_counter = peak_counter+1;
-                // TODO make the 2 a variable, possibly configurable in program too
-                if (peak_counter >= 2) {
+                if (peak_counter >= peak_rising_edge_threshold_frames) {
                     in_peak = true;
                     Debug.Log("beat was signaled");
 
