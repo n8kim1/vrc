@@ -332,10 +332,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 metronomeScheduled.beatDurationIntendedWeight -= 0.01;
             }
             if (config_selected == 4) {
-                midiPlayerScript.piece_choice_idx -= 1;
-                if (midiPlayerScript.piece_choice_idx <= 0) {
-                    midiPlayerScript.piece_choice_idx = midiPlayerScript.piece_choice_len - 1;
-                }
+                midiPlayerScript.ChoosePrevPiece();
             }
         }
 
@@ -356,10 +353,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
                 metronomeScheduled.beatDurationIntendedWeight += 0.01;
             }
             if (config_selected == 4) {
-                midiPlayerScript.piece_choice_idx += 1;
-                if (midiPlayerScript.piece_choice_idx >= midiPlayerScript.piece_choice_len) {
-                    midiPlayerScript.piece_choice_idx = 0;
-                }
+                midiPlayerScript.ChooseNextPiece();
             }
         }
 
@@ -395,7 +389,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         if (config_selected == 4) {
             configText.text += "-> ";
         }
-        if (midiPlayerScript.piece_choice_idx == 0) {
+        if (midiPlayerScript.GetPieceChoiceIdx() == 0) {
             configText.text += "Piece: Slow";
         }
         else {
