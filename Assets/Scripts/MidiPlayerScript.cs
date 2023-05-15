@@ -185,6 +185,9 @@ public class MidiPlayerScript : MonoBehaviour
         // Switch the keyboard button in use to something else
         if (resetPressed)
         {
+            // TODO should differentiate states between "stop" and "reset"
+            // (in this file comments)
+            // and then also change the verbage used in the code and display and etc
             Debug.Log("Reset was pressed");
             mainText.text = "resetting...";
 
