@@ -1206,7 +1206,6 @@ GameObject:
   - component: {fileID: 623537593}
   - component: {fileID: 623537592}
   - component: {fileID: 623537591}
-  - component: {fileID: 623537590}
   - component: {fileID: 623537595}
   m_Layer: 0
   m_Name: Player Response Cube
@@ -1215,22 +1214,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &623537590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623537589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7169035b6e607ad46ac105fa180823aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  midiFilePlayer: {fileID: 1501458114}
-  spatialAnchorsGenFake: {fileID: 823873140}
-  mainText: {fileID: 490633829}
-  bottomText: {fileID: 0}
 --- !u!65 &623537591
 BoxCollider:
   m_ObjectHideFlags: 0
