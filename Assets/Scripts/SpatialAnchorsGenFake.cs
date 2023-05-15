@@ -42,6 +42,12 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     int peak_counter = 0;
     int peak_rising_edge_threshold_frames = 2;
     int peak_falling_edge_threshold_frames = 2;
+    // Naively, pressing up/down to adjust a discrete integer
+    // will change the integer by 1 per _frame_ which is way too much.
+    // To get around this, we save a version of this variable that is controlled,
+    // and is a float so it can be controlled in finer amounts.
+    // TODO this should reference the above variable. That's hard to do in init tho
+    float peak_rising_edge_threshold_frames_in_settings = 2.0f;
 
     // Should this be accel?
     // Should this only consider y-dir? 
@@ -141,17 +147,20 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
         if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickUp) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            velo_threshold_high += 0.01f;
-            Debug.Log(velo_threshold_high);
+            peak_rising_edge_threshold_frames_in_settings += 0.1f;
+            // TODO errr don't let this go below 1
+            peak_rising_edge_threshold_frames = (int) peak_rising_edge_threshold_frames_in_settings;
         }
         if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickDown) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            velo_threshold_high -= 0.01f;
+            peak_rising_edge_threshold_frames_in_settings -= 0.1f;
+            // TODO errr don't let this go below 1
+            peak_rising_edge_threshold_frames = (int) peak_rising_edge_threshold_frames_in_settings;
         }
 
         // display some stuff for debug
         debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
-        debugText.text += "RH spd thresh: " + velo_threshold_high.ToString() + "\n";
+        debugText.text += "RH peak frames thresh: " + peak_rising_edge_threshold_frames.ToString() + "\n";
         // debugText.text += "timeskip thresh: " + frameskip_time_threshold;
         // TODO display fps
 
