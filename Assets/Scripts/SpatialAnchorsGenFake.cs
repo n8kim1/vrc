@@ -26,6 +26,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // TODO conflict is imminent w the MidiPlayerScript ...
     public TMP_Text displayText;
     public TMP_Text debugText;
+    public TMP_Text configText;
 
     OVRPose leftObjectPose;
     OVRPose rightObjectPose;
@@ -75,6 +76,13 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // Adjust the "4" as necessary; kinda arbitrary
     float frameskip_time_threshold = 1 / (framerate + 0.0f) / 4;
     // Note the "conversion" to a float. A cast would work too
+
+    // Variables for the menu of configuration settings.
+    // TODO Consider putting configurations variables also here,
+    // tho I don't think that's a great idea
+    int config_selected = 0;
+    static int config_len = 3;
+
 
     // references to other objcts, scripts, etc
 
@@ -144,20 +152,6 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         // using Unity's Math package
         velo = Mathf.Pow(velo, 0.5f);
         velo = velo / (curTime - lastTime);
-
-        if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickUp) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            peak_rising_edge_threshold_frames_in_settings += 0.1f;
-            peak_rising_edge_threshold_frames = (int) peak_rising_edge_threshold_frames_in_settings;
-        }
-        if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickDown) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            peak_rising_edge_threshold_frames_in_settings -= 0.1f;
-            if (peak_rising_edge_threshold_frames_in_settings < 1.0f) {
-                peak_rising_edge_threshold_frames_in_settings = 1.0f;
-            }
-            peak_rising_edge_threshold_frames = (int) peak_rising_edge_threshold_frames_in_settings;
-        }
 
         // display some stuff for debug
         debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
@@ -301,6 +295,79 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             midiPlayerScript.SignalAccent();
             colorChanger.SetRed();
         }
+        
+        // Take in inputs for config menu
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickDown) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            config_selected += 1;
+            if (config_selected >= config_len) {
+                config_selected = 0;
+            }
+        }
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickUp) || Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            config_selected -= 1;
+            if (config_selected < 0) {
+                config_selected = config_len - 1;
+            }
+        }
+
+        // TODO can dedupe left/right somehow...
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickLeft)  || Input.GetKeyDown(KeyCode.LeftArrow)) {
+            // Adjust the config as desired
+            // TODO should rlly use cases
+            if (config_selected == 0) {
+                velo_threshold_high -= 0.1f;
+            }
+            if (config_selected == 1) {
+                peak_rising_edge_threshold_frames -= 1;
+                if (peak_rising_edge_threshold_frames <= 1) {
+                    peak_rising_edge_threshold_frames = 1;
+                }
+            }
+            if (config_selected == 2) {
+                velo_threshold_accent -= 0.1f;
+            }
+        }
+
+        // TODO can dedupe left/right somehow...
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickRight)  || Input.GetKeyDown(KeyCode.RightArrow)) {
+            // Adjust the config as desired
+            // TODO should rlly use cases
+            if (config_selected == 0) {
+                velo_threshold_high += 0.1f;
+            }
+            if (config_selected == 1) {
+                peak_rising_edge_threshold_frames += 1;
+            }
+            if (config_selected == 2) {
+                velo_threshold_accent += 0.1f;
+            }
+        }
+
+        // TODO the arrow could be made more efficient runtime, less code, etc
+        // if it becomes its own textbox and canvas.
+        // Eg tall narrow textbox on left, w arrow toggling btwn rows, 
+        // rest of settings on right
+        // Render config menu
+        configText.text = "";
+        if (config_selected == 0) {
+            configText.text += "-> ";
+        }
+        // TODO optimize the rounding trick.
+        // Find a better function, or if that doesn't work, string truncate?
+        // Extract to a submethod too
+        configText.text += "Beat hand-velo: " + (Mathf.Round(velo_threshold_high*10)/10).ToString() + "\n";
+
+        if (config_selected == 1) {
+            configText.text += "-> ";
+        }
+        configText.text += "Beat # frames: " + peak_rising_edge_threshold_frames.ToString() + "\n";
+
+        if (config_selected == 2) {
+            configText.text += "-> ";
+        }
+        configText.text += "Accent hand-velo: " + (Mathf.Round(velo_threshold_accent*10)/10).ToString() + "\n";
     }
 
     public void StartRecording()
