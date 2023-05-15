@@ -36,6 +36,9 @@ public class MidiPlayerScript : MonoBehaviour
     // (since on the fly we easily have ticks)
     long beat_accent_signaled = -2;
 
+    public int piece_choice_idx = 0;
+    public int piece_choice_len = 2;
+
     // Start is called before the first frame update
     void Start()
     {
