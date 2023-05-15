@@ -15,7 +15,8 @@ public class MetronomeScheduled : MonoBehaviour {
     private double beatDuration; 
 
     private double lastBeatIntended;
-    private double bpmIntended = bpmInitial;
+    // TODO should change for each piece
+    private double bpmIntended = 150.0F;
 
     public TMP_Text debugText;
 
