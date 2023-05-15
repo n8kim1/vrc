@@ -27,6 +27,7 @@ public class MetronomeScheduled : MonoBehaviour {
     // TODO fine-tune this based on "perceptible change in tempo"
     // (ie what tempo stability is needed so that odd timing quirks don't really throw you off)
     // TODO implement some stuff that's better w dropping beats etc
+    // TODO should really be exposed via getter/setter oneliner
     public double beatDurationIntendedWeight = 0.15F;
  
     void Start() { 
