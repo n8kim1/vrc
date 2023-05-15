@@ -29,7 +29,8 @@ public class MetronomeScheduled : MonoBehaviour {
     // TODO implement some stuff that's better w dropping beats etc
     // TODO should really be exposed via getter/setter oneliner
     public double beatDurationIntendedWeight = 0.15F;
- 
+    private double beatDurationIntendedWeightUsed = 0.15F;
+
     void Start() { 
         beatDuration = 60.0F / bpmInitial; // seconds per beat
         double startTick = AudioSettings.dspTime; 
@@ -74,6 +75,16 @@ public class MetronomeScheduled : MonoBehaviour {
         // TODO consider making these configurable too but IDK
         if (0.6 < beatDurationIntended / beatDuration && beatDurationIntended / beatDuration < 1.67)
         {
+            // increase weight for slowdowns, 
+            // making signaled beats that call for slowing down more drastic
+
+            // TODO this feels really inefficient fsr
+            if (beatDurationIntended > beatDuration) {
+                beatDurationIntendedWeightUsed = beatDurationIntendedWeight * 4; 
+            }
+            else {
+                beatDurationIntendedWeightUsed = beatDurationIntendedWeight;
+            }
             beatDuration = beatDurationIntendedWeight * beatDurationIntended + (1-beatDurationIntendedWeight) * beatDuration;
         }
         else {
