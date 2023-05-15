@@ -27,7 +27,7 @@ public class MetronomeScheduled : MonoBehaviour {
     // TODO fine-tune this based on "perceptible change in tempo"
     // (ie what tempo stability is needed so that odd timing quirks don't really throw you off)
     // TODO implement some stuff that's better w dropping beats etc
-    private const double beatDurationIntendedWeight = 0.15F;
+    public double beatDurationIntendedWeight = 0.15F;
  
     void Start() { 
         beatDuration = 60.0F / bpmInitial; // seconds per beat

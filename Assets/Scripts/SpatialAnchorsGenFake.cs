@@ -81,7 +81,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // TODO Consider putting configurations variables also here,
     // tho I don't think that's a great idea
     int config_selected = 0;
-    static int config_len = 3;
+    static int config_len = 4;
 
 
     // references to other objcts, scripts, etc
@@ -328,6 +328,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             if (config_selected == 2) {
                 velo_threshold_accent -= 0.1f;
             }
+            if (config_selected == 3) {
+                metronomeScheduled.beatDurationIntendedWeight -= 0.01;
+            }
         }
 
         // TODO can dedupe left/right somehow...
@@ -342,6 +345,9 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             }
             if (config_selected == 2) {
                 velo_threshold_accent += 0.1f;
+            }
+            if (config_selected == 3) {
+                metronomeScheduled.beatDurationIntendedWeight += 0.01;
             }
         }
 
@@ -368,6 +374,11 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             configText.text += "-> ";
         }
         configText.text += "Accent hand-velo: " + (Mathf.Round(velo_threshold_accent*10)/10).ToString() + "\n";
+
+        if (config_selected == 3) {
+            configText.text += "-> ";
+        }
+        configText.text += "Beat change weight: " + (Mathf.Round((float) metronomeScheduled.beatDurationIntendedWeight*100)/100).ToString() + "\n";
     }
 
     public void StartRecording()
