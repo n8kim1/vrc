@@ -148,13 +148,14 @@ public class SpatialAnchorsGenFake : MonoBehaviour
         if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickUp) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             peak_rising_edge_threshold_frames_in_settings += 0.1f;
-            // TODO errr don't let this go below 1
             peak_rising_edge_threshold_frames = (int) peak_rising_edge_threshold_frames_in_settings;
         }
         if (OVRInput.Get(OVRInput.Button.PrimaryThumbstickDown) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             peak_rising_edge_threshold_frames_in_settings -= 0.1f;
-            // TODO errr don't let this go below 1
+            if (peak_rising_edge_threshold_frames_in_settings < 1.0f) {
+                peak_rising_edge_threshold_frames_in_settings = 1.0f;
+            }
             peak_rising_edge_threshold_frames = (int) peak_rising_edge_threshold_frames_in_settings;
         }
 
