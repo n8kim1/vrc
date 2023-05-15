@@ -30,6 +30,7 @@ public class MetronomeScheduled : MonoBehaviour {
     // TODO should really be exposed via getter/setter oneliner
     public double beatDurationIntendedWeight = 0.15F;
     private double beatDurationIntendedWeightUsed = 0.15F;
+    private bool isSlowDown = false;
 
     void Start() { 
         beatDuration = 60.0F / bpmInitial; // seconds per beat
@@ -80,9 +81,17 @@ public class MetronomeScheduled : MonoBehaviour {
 
             // TODO this feels really inefficient fsr
             if (beatDurationIntended > beatDuration) {
-                beatDurationIntendedWeightUsed = beatDurationIntendedWeight * 4; 
+                // Respond even more to a tentative slowdown.
+                if (isSlowDown) {
+                    beatDurationIntendedWeightUsed = beatDurationIntendedWeight * 4; 
+                }
+                else {
+                    beatDurationIntendedWeightUsed = beatDurationIntendedWeight * 2; 
+                }
+                isSlowDown = true;
             }
             else {
+                isSlowDown = false;
                 beatDurationIntendedWeightUsed = beatDurationIntendedWeight;
             }
             beatDuration = beatDurationIntendedWeight * beatDurationIntended + (1-beatDurationIntendedWeight) * beatDuration;
