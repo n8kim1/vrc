@@ -81,7 +81,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
     // TODO Consider putting configurations variables also here,
     // tho I don't think that's a great idea
     int config_selected = 0;
-    static int config_len = 4;
+    static int config_len = 5;
 
 
     // references to other objcts, scripts, etc
@@ -331,6 +331,12 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             if (config_selected == 3) {
                 metronomeScheduled.beatDurationIntendedWeight -= 0.01;
             }
+            if (config_selected == 4) {
+                midiPlayerScript.piece_choice_idx -= 1;
+                if (midiPlayerScript.piece_choice_idx <= 0) {
+                    midiPlayerScript.piece_choice_idx = midiPlayerScript.piece_choice_len - 1;
+                }
+            }
         }
 
         // TODO can dedupe left/right somehow...
@@ -348,6 +354,12 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             }
             if (config_selected == 3) {
                 metronomeScheduled.beatDurationIntendedWeight += 0.01;
+            }
+            if (config_selected == 4) {
+                midiPlayerScript.piece_choice_idx += 1;
+                if (midiPlayerScript.piece_choice_idx >= midiPlayerScript.piece_choice_len) {
+                    midiPlayerScript.piece_choice_idx = 0;
+                }
             }
         }
 
@@ -379,6 +391,17 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             configText.text += "-> ";
         }
         configText.text += "Beat change weight: " + (Mathf.Round((float) metronomeScheduled.beatDurationIntendedWeight*100)/100).ToString() + "\n";
+
+        if (config_selected == 4) {
+            configText.text += "-> ";
+        }
+        if (midiPlayerScript.piece_choice_idx == 0) {
+            configText.text += "Piece: Slow";
+        }
+        else {
+            configText.text += "Piece: Fast";
+        }
+
     }
 
     public void StartRecording()
