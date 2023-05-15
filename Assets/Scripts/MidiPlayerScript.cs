@@ -109,7 +109,7 @@ public class MidiPlayerScript : MonoBehaviour
 
         if (playTogglePressed)
         {
-            Debug.Log("Play input was pressed");
+            Debug.Log("Play input was pressed", this);
             if (!isPlaying) {
                 midiFilePlayer.MPTK_Play();
 
@@ -173,7 +173,6 @@ public class MidiPlayerScript : MonoBehaviour
             currentTick = midiFilePlayer.MPTK_TickCurrent;
             if (currentTick > lastTick) {
                 currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
-                Debug.Log("q: " + currentQuarter); 
                 // TODO turn this into beat and measure, math should be simple
                 // TODO it's annoying to show . of a beat. Drop this. 
                 // Maybe ask around and try different things
@@ -223,7 +222,7 @@ public class MidiPlayerScript : MonoBehaviour
                 // setting the variable to an int above 127
                 // makes the synth produce nothing
 
-                Debug.Log(midiEvent.Velocity);
+                // Debug.Log(midiEvent.Velocity);
 
             break;
         }
