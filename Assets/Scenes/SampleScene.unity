@@ -3353,6 +3353,7 @@ MonoBehaviour:
   scriptName: {fileID: 1466554765}
   bpmInitial: 140
   debugText: {fileID: 1868592246}
+  beatDurationIntendedWeight: 0.15000000596046448
 --- !u!82 &1631814694
 AudioSource:
   m_ObjectHideFlags: 0
