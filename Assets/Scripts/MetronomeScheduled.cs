@@ -8,15 +8,14 @@ public class MetronomeScheduled : MonoBehaviour {
     public MidiFilePlayer midiFilePlayer; 
     public MidiPlayerScript scriptName;
 
-    // TODO no one wants to conduct in 210bpm
-    // drop to 105 and impl cut time properly
-    public double bpmInitial = 210.0F; 
+    // TODO should change for each piece
+    public double bpmInitial = 150.0F; 
  
     private double nextTickTime; 
     private double beatDuration; 
 
     private double lastBeatIntended;
-    private double bpmIntended = 140.0F;
+    private double bpmIntended = bpmInitial;
 
     public TMP_Text debugText;
 
