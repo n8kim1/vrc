@@ -14,6 +14,7 @@ public class MidiPlayerScript : MonoBehaviour
     public TMP_Text bottomText;
 
     bool isPlaying = false;
+    bool isResetQueued = true;
 
     // For computing beat/measure within piece
     long tickFirstNote;
@@ -113,6 +114,27 @@ public class MidiPlayerScript : MonoBehaviour
         if (playTogglePressed)
         {
             Debug.Log("Play input was pressed", this);
+
+            if (isResetQueued) {
+                Debug.Log("Initializing playing, piece " + piece_choice_idx);
+
+                // Load proper piece and initialize data.
+
+                if (piece_choice_idx == 0) {
+                    midiFilePlayer.MPTK_MidiName = "eine_kle_mvt_2_tempo_prep";
+                }
+
+                else if (piece_choice_idx == 1) {
+                    midiFilePlayer.MPTK_MidiName = "eine_kle_prep_measure";
+                }
+
+                Debug.Log(midiFilePlayer.MPTK_MidiName);
+
+                // TODO setup tempo correctly
+                // TODO init accents etc correctly
+
+                isResetQueued = false;
+            }
             if (!isPlaying) {
                 midiFilePlayer.MPTK_Play();
 
@@ -161,6 +183,9 @@ public class MidiPlayerScript : MonoBehaviour
             lastTick = -1;
 
             spatialAnchorsGenFake.StopRecording();
+
+            // TODO externally tracking this is rough
+            isResetQueued = true;
         }
         
         if (Input.GetKeyDown(KeyCode.T))
