@@ -160,7 +160,7 @@ public class SpatialAnchorsGenFake : MonoBehaviour
 
         // display some stuff for debug
         debugText.text = "RH spd: " + (Mathf.Round(velo*100)/100).ToString() + "\n";
-        debugText.text += "RH peak frames thresh: " + peak_rising_edge_threshold_frames.ToString() + "\n";
+        debugText.text += "RH pk frame thresh: " + peak_rising_edge_threshold_frames.ToString() + "\n";
         // debugText.text += "timeskip thresh: " + frameskip_time_threshold;
         // TODO display fps
 
