@@ -61,10 +61,10 @@ public class MidiPlayerScript : MonoBehaviour
         // Perhaps inefficient, but eh it's only run once
         mainText.text = "Welcome!";
         bottomText.text = "";
-        bottomText.text += "Controls:" + "\n";
-        bottomText.text += "X to play/pause" + "\n";
-        bottomText.text += "Y to stop and reset" + "\n";
-        bottomText.text += "LH stick up/down to adjust beat detection sensitivity" + "\n";
+        // bottomText.text += "Controls:" + "\n";
+        bottomText.text += "X to play/pause, Y to stop and reset" + "\n";
+        bottomText.text += "LH stick up/down to select setting" + "\n";
+        bottomText.text += "LH stick left/right to change setting" + "\n";
 
         accentBeats.Add(0);
         accentBeats.Add(2);
