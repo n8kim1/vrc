@@ -47,6 +47,10 @@ public class MetronomeScheduled : MonoBehaviour {
         // scriptName = midiFilePlayer.GetComponent<MidiPlayerScript>();
         Debug.Log("script name " + scriptName);
 
+        // Re-initialize here, just in case it picks up on values defined in the scene.
+        bpmInitial = 150.0f;
+        bpmIntended = 150.0f;
+
     } 
  
     void Update() {
