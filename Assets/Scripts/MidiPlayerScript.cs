@@ -89,13 +89,11 @@ public class MidiPlayerScript : MonoBehaviour
         bottomText.text += "LH stick up/down to select setting" + "\n";
         bottomText.text += "LH stick left/right to change setting" + "\n";
 
-        accentBeats.Add(0);
-        accentBeats.Add(2);
-        accentBeats.Add(4);
-        accentBeats.Add(8);
-        accentBeats.Add(10);
-        accentBeats.Add(12);
-        accentBeats.Add(16);
+        // Lazy way to integrate accents
+        // TODO this should become a piece by piece thing
+        for (int i = 0; i <= 282*2*2; i = i+2) {
+            accentBeats.Add(i);
+        }
 
         // TODO I can't get original tempo to work fsr...
         // Might have to do with timing on load or play or something
