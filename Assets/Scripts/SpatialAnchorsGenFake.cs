@@ -296,6 +296,12 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             colorChanger.SetRed();
         }
         
+        // When hand-tracking, the "thumbsticks" take in wild inputs.
+        // Disable using them if hand-tracking.
+        // TODO I'm uh realizing that the thumbsticks don't have L/R hand differentiation.
+        // This is probably bad
+        if (!OVRPlugin.GetHandTrackingEnabled()) {
+
         // Take in inputs for config menu
         if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickDown) || Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -355,6 +361,8 @@ public class SpatialAnchorsGenFake : MonoBehaviour
             if (config_selected == 4) {
                 midiPlayerScript.ChooseNextPiece();
             }
+        }
+
         }
 
         // TODO the arrow could be made more efficient runtime, less code, etc
