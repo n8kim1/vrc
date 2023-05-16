@@ -33,28 +33,33 @@ public class MetronomeScheduled : MonoBehaviour {
     private bool isSlowDown = false;
 
     void Start() { 
-        beatDuration = 60.0F / bpmInitial; // seconds per beat
-        double startTick = AudioSettings.dspTime; 
-
-        // Set up initial state
-        lastBeatIntended = startTick;
-        nextTickTime = lastBeatIntended + beatDuration; 
-        // TODO
-        // Note that as of now, this will autoplay, 
-        // until the first beat is called for.
-        // BPM will drastically slow (because the inferred beat includes that pause at the beginning)
-        // Better safeguards should take care of this?
-
         // Find the script hooked to the midiFilePlayer
         // scriptName = midiFilePlayer.GetComponent<MidiPlayerScript>();
         Debug.Log("script name " + scriptName);
-
-        // Re-initialize here, just in case it picks up on values defined in the scene.
-        bpmInitial = 150.0f;
-        bpmIntended = 150.0f;
-
     } 
  
+    public void InitBpm(float bpm) {
+        Debug.Log("Init bpm", this);
+        bpmInitial = bpm;
+        bpmIntended = bpm;
+
+        // TODO how to deal with the fact that the first "signaled beat"
+        // will be the duration since the start of the program etc?
+        // BPM will drastically slow (because the inferred beat includes that pause at the beginning)
+        // Better safeguards should take care of this?
+        // TODO I'm 99% sure a lot of this stuff could be cut down.
+        // Save for a fairly full refactor later...
+        beatDuration = 60.0F / bpmInitial; // seconds per beat
+        double startTick = AudioSettings.dspTime; 
+        // Set up initial state
+        lastBeatIntended = startTick;
+        nextTickTime = lastBeatIntended + beatDuration; 
+
+        Debug.Log("bpm asked: "+ bpm);
+        Debug.Log("bpm set: "+ bpmInitial + bpmIntended);
+
+    }
+
     void Update() {
         // If you want a quick-and-dirty "mute", uncomment the following return stmt: 
         // return;
