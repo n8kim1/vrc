@@ -2650,6 +2650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   midiFilePlayer: {fileID: 1501458114}
   spatialAnchorsGenFake: {fileID: 823873140}
+  metronomeScheduled: {fileID: 1631814693}
   mainText: {fileID: 490633829}
   bottomText: {fileID: 1896253786}
 --- !u!114 &1501458114 stripped

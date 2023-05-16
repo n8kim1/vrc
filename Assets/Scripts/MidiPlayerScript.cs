@@ -9,6 +9,7 @@ public class MidiPlayerScript : MonoBehaviour
 {
     public MidiFilePlayer midiFilePlayer;
     public SpatialAnchorsGenFake spatialAnchorsGenFake;
+    public MetronomeScheduled metronomeScheduled;
 
     public TMP_Text mainText;
     public TMP_Text bottomText;
@@ -140,10 +141,12 @@ public class MidiPlayerScript : MonoBehaviour
 
                 if (piece_choice_idx == 0) {
                     midiFilePlayer.MPTK_MidiName = "eine_kle_mvt_2_tempo_prep";
+                    metronomeScheduled.InitBpm(60.0f);
                 }
 
                 else if (piece_choice_idx == 1) {
                     midiFilePlayer.MPTK_MidiName = "eine_kle_prep_measure";
+                    metronomeScheduled.InitBpm(150.0f);
                 }
 
                 Debug.Log(midiFilePlayer.MPTK_MidiName);
