@@ -1,10 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
-using System;
-using System.IO;
-using System.Reflection;
 
 [CustomEditor(typeof(Readme))]
 [InitializeOnLoad]
@@ -43,7 +38,7 @@ public class ReadmeEditor : Editor
     //    method.Invoke(null, new object[] { Path.Combine(Application.dataPath, "TutorialInfo/Layout.wlt"), false });
     //}
 
-    [MenuItem("MPTK/Show Tutorial Instructions", false, 51)]
+    [MenuItem("Maestro/Show Tutorial Instructions", false, 51)]
     static Readme SelectReadme()
     {
         var ids = AssetDatabase.FindAssets("Readme t:Readme");
@@ -63,7 +58,7 @@ public class ReadmeEditor : Editor
     }
 
     // % (ctrl on Windows, cmd on macOS), # (shift), & (alt).
-    [MenuItem("MPTK/Open Logs Folder", false, 52)]
+    [MenuItem("Maestro/Open Logs Folder", false, 52)]
     static void OpenFolder(MenuCommand menuCommand)
     {
         Application.OpenURL("file://" + Application.persistentDataPath);
