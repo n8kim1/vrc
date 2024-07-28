@@ -1,3 +1,11 @@
+# .gitignore customized for this project
+
+Assets/MidiPlayer/
+
+########################################
+
+# Suggested .gitignore:
+
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Source: https://github.com/github/gitignore/blob/main/Unity.gitignore
