@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<MidiSet xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SoundFonts>
+    <SoundFontInfo>
+      <Name>GeneralUser GS v1.471</Name>
+      <PatchCount>269</PatchCount>
+      <WaveCount>864</WaveCount>
+      <WaveSize>35262462</WaveSize>
+      <!-- Edit to match your path -->
+      <SF2Path>C:/Users/syoro/AppData/LocalLow/DefaultCompany/recorder2\SoundFont\GeneralUser GS v1.471.sf2</SF2Path>
+    </SoundFontInfo>
+  </SoundFonts>
+  <IndexSelectedSF>0</IndexSelectedSF>
+  <MidiFiles>
+    <string>eine_kle</string>
+    <string>eine_kle_mvt_2_tempo_prep</string>
+    <string>eine_kle_prep_measure</string>
+    <string>k550_1</string>
+  </MidiFiles>
+</MidiSet>
