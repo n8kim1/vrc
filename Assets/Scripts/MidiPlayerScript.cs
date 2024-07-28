@@ -255,7 +255,7 @@ public class MidiPlayerScript : MonoBehaviour
         beat_accent_signaled = currentBeat;
     }
 
-    void OnMidiEvent (MPTKEvent midiEvent)
+    public bool OnMidiEvent(MPTKEvent midiEvent)
     {
         switch (midiEvent.Command)
         {
@@ -276,5 +276,7 @@ public class MidiPlayerScript : MonoBehaviour
 
             break;
         }
+
+        return true;
     }
 }
