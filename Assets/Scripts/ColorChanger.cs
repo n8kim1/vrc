@@ -1,40 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ColorChanger : MonoBehaviour
 {
 
-    private Renderer renderer;
+    private Renderer colorChangerRenderer;
 
-    // The brown color that makes default meshes, etc, eyedropped
-    Color defaultBrown = new Color(0.4f, 0.9f, 0.7f, 1.0f);
+    // Color(0.4f, 0.9f, 0.7f, 1.0f) is the
+    // brown-gray color that approximates the color of the
+    // other meshes in the project. Derived empirically, with an eyedropper tool
+    Color defaultColor = new(0.4f, 0.9f, 0.7f, 1.0f);
 
     void Start()
     {
-        renderer = GetComponent<Renderer>();
+        colorChangerRenderer = GetComponent<Renderer>();
     }
 
     public void SetRed() 
     {
-        renderer.material.color = Color.red;
+        colorChangerRenderer.material.color = Color.red;
     }
 
     public void SetBlue() 
     {
-        renderer.material.color = Color.blue;
+        colorChangerRenderer.material.color = Color.blue;
     }
 
     public void SetGray() 
     {
-        renderer.material.color = Color.gray;
+        colorChangerRenderer.material.color = Color.gray;
     }
 
+    public void ResetColor()
+    {
+        colorChangerRenderer.material.color = defaultColor;
+    }
+
+    // Helpful for testing
     private void OnMouseEnter()
     {
         SetRed();
     }
 
+    // Helpful for testing
     private void OnMouseExit()
     {
         SetBlue();
