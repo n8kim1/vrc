@@ -24,8 +24,8 @@ public class Metronome : MonoBehaviour
         sampleRate = AudioSettings.outputSampleRate;
         nextTick = startTick * sampleRate;
         // Toggle to false for this "metronome" to stop producing audio
-        running = true;
-        // running = false;
+        // running = true;
+        running = false;
     }
 
     void OnAudioFilterRead(float[] data, int channels)
@@ -44,7 +44,7 @@ public class Metronome : MonoBehaviour
             int i = 0;
             while (i < channels)
             {
-                data[n * channels + i] += x; 
+                data[n * channels + i] += x;
                 i++;
             }
             while (sample + n >= nextTick)
