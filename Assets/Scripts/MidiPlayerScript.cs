@@ -1,5 +1,7 @@
-// TODO am I even using the system.collections and .generic imports??
-using System.Collections;
+// Controls the playing of MIDI notes. 
+// (Also controls other related scripts and objects as needed,
+// such as piece selection)
+
 using System.Collections.Generic;
 using UnityEngine;
 using MidiPlayerTK;
@@ -14,32 +16,28 @@ public class MidiPlayerScript : MonoBehaviour
     public TMP_Text mainText;
     public TMP_Text bottomText;
 
+    // TODO try switching out for midiFilePlayer.is_playing
     bool isPlaying = false;
     bool isResetQueued = true;
 
     // For computing beat/measure within piece
     long tickFirstNote;
-    // This is float (not long, as is given by the MIDI player)
-    // in order to enable offbeat division
+
     long ticksPerQuarter;
     long currentTick;
     // Float, so decimals can be nicely displayed
     float currentQuarter;
-    // To only update on demand. 
-    // Note that it starts at -1, so that beat 0 displays afresh.
+    // To track last played tick, to prevent accidentally going backwards 
+    // (starts at -1, which is never played)
+    // TODO Keeping track of this, and using this, might be redundant
     long lastTick = -1;
 
-    // For representing state of accent and playing them
-    bool is_accent = false;
-    HashSet<long> accentBeats = new HashSet<long>();
-    // TODO I'm not sure whether we should be doing math in beats or ticks as the standard unit
-    // Beats is more intuitive, but demands more frequent converstions on the fly
-    // which is bad for FPS
-    // (since on the fly we easily have ticks)
+    readonly HashSet<long> accentBeats = new();
+    readonly int accentBeatFrequency = 2;
     long beat_accent_signaled = -2;
 
     private int piece_choice_idx = 0;
-    private int piece_choice_len = 2;
+    private readonly int piece_choice_len = 2;
 
     public void ChoosePrevPiece () {
         piece_choice_idx -= 1;
@@ -62,56 +60,32 @@ public class MidiPlayerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // TODO verify that this _works_
-        // IDK whether this has to be called before/after play.
-        // Easiest is to find a midi that definitely changes tempo early and noticeably
+        // Disable all tempo changes in piece, 
+        // so that conductor (and tempo changing script) can control these
         midiFilePlayer.MPTK_EnableChangeTempo = false;
-        
-        // TODO better queueing mechanism.
-        // Right now it's like "start beats and then play when you're ready!"
+
         midiFilePlayer.MPTK_StartPlayAtFirstNote = true;
 
-        midiFilePlayer.MPTK_Volume = 0.5f;
-
         midiFilePlayer.OnMidiEvent = OnMidiEvent;
-
-        // These values are set to 0 before the midi player begins
-        // so don't read them yet
-        // ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
-        // tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
 
         // Initialize text
         // Perhaps inefficient, but eh it's only run once
         mainText.text = "Welcome!";
         bottomText.text = "";
-        // bottomText.text += "Controls:" + "\n";
         bottomText.text += "X to play/pause, Y to stop and reset" + "\n";
         bottomText.text += "LH stick up/down to select setting" + "\n";
         bottomText.text += "LH stick left/right to change setting" + "\n";
+    }
 
-        // Lazy way to integrate accents
-        // TODO this should become a piece by piece thing
-        for (int i = 0; i <= 282*2*2; i = i+2) {
+    void InitializeAccents()
+    {
+        // Currently adds accents on every n'th beat.
+        // Better would be to work this into MIDI info
+        for (int i = 0; i <= 282 * 2 * 2; i += accentBeatFrequency)
+        {
             accentBeats.Add(i);
         }
 
-        // TODO I can't get original tempo to work fsr...
-        // Might have to do with timing on load or play or something
-        // midiFilePlayer.MPTK_Tempo = 140;
-
-        // Print some info about the MIDI.
-        // Is mainly useful for debugging and proof-of-concept/demo.
-        // MidiLoad midiloaded = midiFilePlayer.MPTK_Load();
-        // if (midiloaded != null)
-        // {
-        //     infoMidi = "Duration: " + midiloaded.MPTK_Duration.TotalSeconds + " seconds\n";
-        //     infoMidi += "Tempo: " + midiloaded.MPTK_InitialTempo + "\n";
-        //     List<MPTKEvent> listEvents = midiloaded.MPTK_ReadMidiEvents();
-        //     infoMidi += "Count MIDI Events: " + listEvents.Count + "\n";
-        //     Debug.Log(infoMidi);
-        // }
-
-        // midiFilePlayer.MPTK_Play();
     }
 
     // Update is called once per frame
@@ -125,32 +99,49 @@ public class MidiPlayerScript : MonoBehaviour
         // OVRInput.Update();
 
         // Check for both headset input and laptop-keyboard input (in debugging)
-        bool playTogglePressed = 
+        bool playTogglePressed =
+            // TODO use specific X button here. Similar for other buttons too
             OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.P);
 
+        // TODO restructure all of these blocks into helper methods. To see control flow more at a glance
         if (playTogglePressed)
         {
             Debug.Log("Play input was pressed", this);
 
-            if (isResetQueued) {
-                Debug.Log("Initializing playing, piece " + piece_choice_idx);
-
+            if (isResetQueued)
+            {
                 // Load proper piece and initialize data.
-
                 if (piece_choice_idx == 0) {
                     midiFilePlayer.MPTK_MidiName = "eine_kle_mvt_2_tempo_prep";
+                    // TODO read this properly from MIDI files
                     metronomeScheduled.InitBpm(60.0f);
                 }
 
                 else if (piece_choice_idx == 1) {
                     midiFilePlayer.MPTK_MidiName = "eine_kle_prep_measure";
+                    // TODO read this properly from MIDI files
                     metronomeScheduled.InitBpm(150.0f);
                 }
 
-                Debug.Log(midiFilePlayer.MPTK_MidiName);
+                Debug.Log("Initializing playing, piece " + midiFilePlayer.MPTK_MidiName);
+                MidiLoad midiloaded = midiFilePlayer.MPTK_Load();
 
-                // TODO setup tempo correctly
-                // TODO init accents etc correctly
+                // Print some info about the MIDI.
+                // Is mainly useful for debugging and proof-of-concept/demo.
+                if (midiloaded != null)
+                {
+                    string infoMidi = "MIDI file's given duration: " + midiloaded.MPTK_Duration.TotalSeconds + " seconds\n";
+                    infoMidi += "MIDI file's given tempo: " + midiloaded.MPTK_InitialTempo + "\n";
+                    Debug.Log(infoMidi);
+                    ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
+                    tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
+                    Debug.Log(tickFirstNote);
+                    Debug.Log(ticksPerQuarter);
+                }
+
+                // TODO better volume controls?
+                midiFilePlayer.MPTK_Volume = 0.5f;
+                InitializeAccents();
 
                 isResetQueued = false;
             }
@@ -159,7 +150,9 @@ public class MidiPlayerScript : MonoBehaviour
 
                 // Get tempo-related values, which now hold valid data,
                 // now that we're playing
-                ticksPerQuarter = (long) midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
+                // (Note: Before the midi player begins,
+                // these values are set to 0)
+                ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
                 tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
 
                 spatialAnchorsGenFake.StartRecording();
@@ -170,6 +163,8 @@ public class MidiPlayerScript : MonoBehaviour
                 // so we have to keep track of this manually.
                 // would be much better if not...
                 isPlaying = true;
+
+
             }
             else {
                 midiFilePlayer.MPTK_Pause();
@@ -243,13 +238,6 @@ public class MidiPlayerScript : MonoBehaviour
         midiFilePlayer.MPTK_Volume = volume;
     }
 
-    // To test whether this is being called anyways
-    public void PrintDebug()
-    {
-        Debug.Log("printdebug called");
-    }
-
- 
     public void SignalAccent () {
         long currentBeat = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
         beat_accent_signaled = currentBeat;
@@ -260,10 +248,12 @@ public class MidiPlayerScript : MonoBehaviour
         switch (midiEvent.Command)
         {
             case MPTKCommand.NoteOn:
-                long currentTick2 = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
-                if (accentBeats.Contains(currentTick2) && (currentTick2 - beat_accent_signaled <= 1.5)) {
-                        midiEvent.Velocity = 127;
-                    }
+                long currentBeat = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
+                if (accentBeats.Contains(currentBeat) && (currentBeat - beat_accent_signaled <= 1.5))
+                {
+                    // Max velocity, for accent to stand out
+                    midiEvent.Velocity = 127;
+                }
                 else {
                     // To keep the overall piece quieter, so that accents stand out
                     midiEvent.Velocity = midiEvent.Velocity / 2;
