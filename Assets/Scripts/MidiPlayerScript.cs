@@ -27,14 +27,10 @@ public class MidiPlayerScript : MonoBehaviour
     long currentTick;
     // Float, so decimals can be nicely displayed
     float currentQuarter;
-    // To track last played tick, to prevent accidentally going backwards 
-    // (starts at -1, which is never played)
-    // TODO Keeping track of this, and using this, might be redundant
-    long lastTick = -1;
 
     readonly HashSet<long> accentBeats = new();
     readonly int accentBeatFrequency = 2;
-    long beat_accent_signaled = -2;
+    long signaledAccentBeat = -2;
 
     private int piece_choice_idx = 0;
     private readonly int piece_choice_len = 2;
@@ -69,7 +65,6 @@ public class MidiPlayerScript : MonoBehaviour
         midiFilePlayer.OnMidiEvent = OnMidiEvent;
 
         // Initialize text
-        // Perhaps inefficient, but eh it's only run once
         mainText.text = "Welcome!";
         bottomText.text = "";
         bottomText.text += "X to play/pause, Y to stop and reset" + "\n";
@@ -99,9 +94,7 @@ public class MidiPlayerScript : MonoBehaviour
         // OVRInput.Update();
 
         // Check for both headset input and laptop-keyboard input (in debugging)
-        bool playTogglePressed =
-            // TODO use specific X button here. Similar for other buttons too
-            OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.P);
+        bool playTogglePressed = OVRInput.GetDown(OVRInput.RawButton.X) || Input.GetKeyDown(KeyCode.X);
 
         // TODO restructure all of these blocks into helper methods. To see control flow more at a glance
         if (playTogglePressed)
@@ -173,22 +166,14 @@ public class MidiPlayerScript : MonoBehaviour
             }
         }
 
-        bool resetPressed = 
-            OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch) || Input.GetKeyDown(KeyCode.R);
+        bool resetPressed = OVRInput.GetDown(OVRInput.RawButton.Y) || Input.GetKeyDown(KeyCode.Y);
 
-        // TODO pressing R throws an error.
-        // Turns out the R button is hooked up to some other code already lmao
-        // Switch the keyboard button in use to something else
         if (resetPressed)
         {
-            // TODO should differentiate states between "stop" and "reset"
-            // (in this file comments)
-            // and then also change the verbage used in the code and display and etc
-            Debug.Log("Reset was pressed");
             mainText.text = "resetting...";
 
-            // yes, stop method, not reset, as per the package this is what does what we want 
-            // (stops and brings to beginning)
+            // Yes, stop method, not reset, as
+            // this is the method that stops and resets to beginning)
             midiFilePlayer.MPTK_Stop();
 
             // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
@@ -196,42 +181,26 @@ public class MidiPlayerScript : MonoBehaviour
             // would be much better if not...
             isPlaying = false;
 
-            // To make the beat still display upon restart
-            lastTick = -1;
-
             spatialAnchorsGenFake.StopRecording();
 
             // TODO externally tracking this is rough
             isResetQueued = true;
         }
-        
-        if (Input.GetKeyDown(KeyCode.T))
+
+        if (isPlaying)
         {
-            Debug.Log("t key was pressed, slowing tempo");
-            midiFilePlayer.MPTK_Tempo *= 0.7;
-        }
-
-        if (isPlaying) {
-            // Display things
-            // TODO should display, or handling buttons, come first?
-            // Is there a better practice? Eran might know??
             currentTick = midiFilePlayer.MPTK_TickCurrent;
-            if (currentTick > lastTick) {
-                currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
-                // TODO turn this into beat and measure, math should be simple
-                // TODO it's annoying to show . of a beat. Drop this. 
-                // Maybe ask around and try different things
-                mainText.text = "q: " + currentQuarter;
-                lastTick = currentTick;
-            }
-
+            currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
+            // TODO turn this into beat and measure, math should be simple
+            // TODO it's annoying to show . of a beat. Drop this. 
+            mainText.text = "q: " + currentQuarter;
         }
     }
 
     public void SetTempo(double tempo)
     {
         midiFilePlayer.MPTK_Tempo = tempo;
-        Debug.Log("tempo set in MidiPlayerScript");
+        Debug.Log("tempo set to " + tempo);
     }
 
     public void SetVolume(float volume){
@@ -239,32 +208,31 @@ public class MidiPlayerScript : MonoBehaviour
     }
 
     public void SignalAccent () {
+        // TODO extract currentBeat calculation to a helper
         long currentBeat = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
-        beat_accent_signaled = currentBeat;
+        signaledAccentBeat = currentBeat;
     }
 
+    // Edit midi events on the fly, according to conductor's signals and inputs
     public bool OnMidiEvent(MPTKEvent midiEvent)
     {
         switch (midiEvent.Command)
         {
             case MPTKCommand.NoteOn:
                 long currentBeat = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
-                if (accentBeats.Contains(currentBeat) && (currentBeat - beat_accent_signaled <= 1.5))
+
+                // Control accents on the note to play, according to what was signaled
+                // Allow some margin of error for signaling accent beats
+                if (accentBeats.Contains(currentBeat) && (currentBeat - signaledAccentBeat <= 1.5))
                 {
                     // Max velocity, for accent to stand out
                     midiEvent.Velocity = 127;
                 }
                 else {
                     // To keep the overall piece quieter, so that accents stand out
-                    midiEvent.Velocity = midiEvent.Velocity / 2;
+                    midiEvent.Velocity /= 2;
                 }
-                // Note that velocity in MIDI ranges from 0 to 127;
-                // setting the variable to an int above 127
-                // makes the synth produce nothing
-
-                // Debug.Log(midiEvent.Velocity);
-
-            break;
+                break;
         }
 
         return true;
