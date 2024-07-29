@@ -1,8 +1,9 @@
-// https://forum.unity.com/threads/do-people-not-realize-how-bad-audiosource-dsptime-is-can-someone-explain-how-it-works.402308/#post-5486028
-// https://docs.unity3d.com/2017.4/Documentation/ScriptReference/AudioSettings-dspTime.html
-
 using UnityEngine;
-using System.Collections;
+
+// Source: a simplification of 
+// https://docs.unity3d.com/ScriptReference/AudioSettings-dspTime.html
+// Note that dspTime suffers from inaccuracies. 
+// Many sources online, such as https://forum.unity.com/threads/do-people-not-realize-how-bad-audiosource-dsptime-is-can-someone-explain-how-it-works.402308/#post-5486028
 
 // The code example shows how to implement a metronome that procedurally generates the click sounds via the OnAudioFilterRead callback.
 // While the game is paused or suspended, this time will not be updated and sounds playing will be paused. Therefore developers of music scheduling routines do not have to do any rescheduling after the app is unpaused
@@ -14,7 +15,6 @@ public class Metronome : MonoBehaviour
     public float gain = 0.5F;
     private double nextTick = 0.0F;
     private float amp = 0.0F;
-    // TODO how does phase, like, work properly
     private float phase = 0.0F;
     private double sampleRate = 0.0F;
     private bool running = false;
@@ -23,13 +23,13 @@ public class Metronome : MonoBehaviour
         double startTick = AudioSettings.dspTime;
         sampleRate = AudioSettings.outputSampleRate;
         nextTick = startTick * sampleRate;
+        // Toggle to false for this "metronome" to stop producing audio
         running = true;
+        // running = false;
     }
 
     void OnAudioFilterRead(float[] data, int channels)
     {
-        return;
-
         if (!running)
             return;
 
@@ -51,13 +51,9 @@ public class Metronome : MonoBehaviour
             {
                 nextTick += samplesPerTick;
                 amp = 1.0F;
-                // Debug.Log("Tick: " + nextTick);
             }
-            // TODO change phase to a thing that's, like, linear wrt to time?
-            // should create a constant tone. at least that would let me ignore some complexity
-            // also figure out how midi works while i'm at it
             phase += 0.125F;
-            // Exponential decay amp over time for each sample
+            // To approximate exponential decay over time
             amp *= 0.9999F;
         }
     }
