@@ -95,23 +95,20 @@ public class MidiPlayerScript : MonoBehaviour
                 }
 
                 Debug.Log("Initializing playing, piece " + midiFilePlayer.MPTK_MidiName);
-                MidiLoad midiloaded = midiFilePlayer.MPTK_Load();
+        MidiLoad midiLoaded = midiFilePlayer.MPTK_Load();
 
-                // Print some info about the MIDI.
-                // Is mainly useful for debugging and proof-of-concept/demo.
-                if (midiloaded != null)
-                {
-                    string infoMidi = "MIDI file's given duration: " + midiloaded.MPTK_Duration.TotalSeconds + " seconds\n";
-                    infoMidi += "MIDI file's given tempo: " + midiloaded.MPTK_InitialTempo + "\n";
-                    Debug.Log(infoMidi);
-                    ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
-                    tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
-                    Debug.Log(tickFirstNote);
-                    Debug.Log(ticksPerQuarter);
-                }
+        if (midiLoaded != null)
+        {
+            ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
+            tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
 
-                // TODO better volume controls?
-                midiFilePlayer.MPTK_Volume = 0.5f;
+            string infoMidi = "MIDI file's given duration: " + midiLoaded.MPTK_Duration.TotalSeconds + " seconds\n";
+            infoMidi += "MIDI file's given tempo: " + midiLoaded.MPTK_InitialTempo + "\n";
+            Debug.Log(infoMidi);
+        }
+
+        // TODO better volume controls?
+        midiFilePlayer.MPTK_Volume = 0.5f;
                 InitializeAccents();
 
                 isResetQueued = false;
