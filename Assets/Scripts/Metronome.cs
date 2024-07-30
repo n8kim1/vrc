@@ -17,7 +17,7 @@ public class Metronome : MonoBehaviour
     private float amp = 0.0F;
     private float phase = 0.0F;
     private double sampleRate = 0.0F;
-    private bool running = false;
+    public bool running = false;
     void Start()
     {
         double startTick = AudioSettings.dspTime;
