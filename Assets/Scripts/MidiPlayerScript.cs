@@ -187,14 +187,10 @@ public class MidiPlayerScript : MonoBehaviour
             isResetQueued = true;
         }
 
-        if (isPlaying)
-        {
-            currentTick = midiFilePlayer.MPTK_TickCurrent;
-            currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
-            // TODO turn this into beat and measure, math should be simple
-            // TODO it's annoying to show . of a beat. Drop this. 
-            mainText.text = "q: " + currentQuarter;
-        }
+        // TODO extract currentBeat calculation to a helper
+        currentTick = midiFilePlayer.MPTK_TickCurrent;
+        currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
+        mainText.text = "q: " + currentQuarter;
     }
 
     public void SetTempo(double tempo)
