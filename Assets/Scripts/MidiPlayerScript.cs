@@ -136,48 +136,33 @@ public class MidiPlayerScript : MonoBehaviour
     void ResetPlayer()
     {
         mainText.text = "resetting...";
-
         // Yes, stop method, not reset, as
         // this is the method that stops and resets to beginning)
         midiFilePlayer.MPTK_Stop();
-
         spatialAnchorsGenFake.StopRecording();
-
         isInitializeQueued = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Handle  inputs
+        // Handle inputs
 
         // Check for both headset input and laptop-keyboard input (in debugging)
         bool playTogglePressed = OVRInput.GetDown(OVRInput.RawButton.X) || Input.GetKeyDown(KeyCode.X);
-
         if (playTogglePressed)
         {
             Debug.Log("Play input was pressed", this);
-
-            if (isInitializeQueued)
-            {
-                InitializePiece();
-            }
+            if (isInitializeQueued) { InitializePiece(); }
             if (!midiFilePlayer.MPTK_IsPlaying || (midiFilePlayer.MPTK_IsPlaying && midiFilePlayer.MPTK_IsPaused))
             {
                 PlayPiece();
             }
-            else
-            {
-                PausePiece();
-            }
+            else { PausePiece(); }
         }
 
         bool resetPressed = OVRInput.GetDown(OVRInput.RawButton.Y) || Input.GetKeyDown(KeyCode.Y);
-
-        if (resetPressed)
-        {
-            ResetPlayer();
-        }
+        if (resetPressed) { ResetPlayer(); }
 
         // Update state as needed 
         if (midiFilePlayer.MPTK_IsPlaying)
