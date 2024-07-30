@@ -121,22 +121,15 @@ public class MidiPlayerScript : MonoBehaviour
                 InitializeAccents();
 
                 isResetQueued = false;
+
+        spatialAnchorsGenFake.StartRecording();
     }
 
     void PlayPiece()
     {
         midiFilePlayer.MPTK_Play();
 
-        // Get tempo-related values, which now hold valid data,
-        // now that we're playing
-        // (Note: Before the midi player begins,
-        // these values are set to 0)
-        ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
-        tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
-
-        spatialAnchorsGenFake.StartRecording();
-
-                mainText.text = "playing";
+        mainText.text = "playing";
 
         // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
         // so we have to keep track of this manually.
@@ -173,17 +166,11 @@ public class MidiPlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Do _not_ call OVRInput.Update
-        // since it's already called in the OVRManager, 
-        // and multiple calls to it prevent GetDown, GetUp, and other frame-specific methods
-        // to fail (something to do with polling too many times)
-        // See, eg, https://lab.popul-ar.com/t/ovr-controller-buttons-not-working/1033
-        // OVRInput.Update();
+        // Handle  inputs
 
         // Check for both headset input and laptop-keyboard input (in debugging)
         bool playTogglePressed = OVRInput.GetDown(OVRInput.RawButton.X) || Input.GetKeyDown(KeyCode.X);
 
-        // TODO restructure all of these blocks into helper methods. To see control flow more at a glance
         if (playTogglePressed)
         {
             Debug.Log("Play input was pressed", this);
@@ -192,7 +179,7 @@ public class MidiPlayerScript : MonoBehaviour
             {
                 InitializePiece();
             }
-            if (!isPlaying)
+            if (!midiFilePlayer.MPTK_IsPlaying || (midiFilePlayer.MPTK_IsPlaying && midiFilePlayer.MPTK_IsPaused))
             {
                 PlayPiece();
             }
@@ -209,10 +196,14 @@ public class MidiPlayerScript : MonoBehaviour
             ResetPlayer();
         }
 
-        // TODO extract currentBeat calculation to a helper
-        currentTick = midiFilePlayer.MPTK_TickCurrent;
-        currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
-        mainText.text = "q: " + currentQuarter;
+        // Update state as needed 
+        if (midiFilePlayer.MPTK_IsPlaying)
+        {
+            // TODO extract currentBeat calculation to a helper
+            currentTick = midiFilePlayer.MPTK_TickCurrent;
+            currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
+            mainText.text = "q: " + currentQuarter;
+        }
     }
 
     public void SetTempo(double tempo)
@@ -231,7 +222,7 @@ public class MidiPlayerScript : MonoBehaviour
         signaledAccentBeat = currentBeat;
     }
 
-    // Edit midi events on the fly, according to conductor's signals and inputs
+    // Process each midi event on the fly, according to conductor's signals and inputs
     public bool OnMidiEvent(MPTKEvent midiEvent)
     {
         switch (midiEvent.Command)
@@ -250,6 +241,7 @@ public class MidiPlayerScript : MonoBehaviour
                     // To keep the overall piece quieter, so that accents stand out
                     midiEvent.Velocity /= 2;
                 }
+
                 break;
         }
 
