@@ -30,21 +30,20 @@ public class MidiPlayerScript : MonoBehaviour
     private int piece_choice_idx = 0;
     private readonly int piece_choice_len = 2;
 
-    public void ChoosePrevPiece () {
+    public void ChoosePrevPiece()
+    {
         piece_choice_idx -= 1;
-        if (piece_choice_idx <= 0) {
-            piece_choice_idx = piece_choice_len - 1;
-        }
+        if (piece_choice_idx <= 0) { piece_choice_idx = piece_choice_len - 1; }
     }
 
-    public void ChooseNextPiece () {
+    public void ChooseNextPiece()
+    {
         piece_choice_idx += 1;
-        if (piece_choice_idx >= piece_choice_len) {
-            piece_choice_idx = 0;
-        }
+        if (piece_choice_idx >= piece_choice_len) { piece_choice_idx = 0; }
     }
 
-    public int GetPieceChoiceIdx () {
+    public int GetPieceChoiceIdx()
+    {
         return piece_choice_idx;
     }
 
@@ -90,11 +89,11 @@ public class MidiPlayerScript : MonoBehaviour
         else if (piece_choice_idx == 1)
         {
             midiFilePlayer.MPTK_MidiName = "eine_kle_prep_measure";
-                    // TODO read this properly from MIDI files
-                    metronomeScheduled.InitBpm(150.0f);
-                }
+            // TODO read this properly from MIDI files
+            metronomeScheduled.InitBpm(150.0f);
+        }
 
-                Debug.Log("Initializing playing, piece " + midiFilePlayer.MPTK_MidiName);
+        Debug.Log("Initializing playing, piece " + midiFilePlayer.MPTK_MidiName);
         MidiLoad midiLoaded = midiFilePlayer.MPTK_Load();
 
         if (midiLoaded != null)
@@ -109,9 +108,9 @@ public class MidiPlayerScript : MonoBehaviour
 
         // TODO better volume controls?
         midiFilePlayer.MPTK_Volume = 0.5f;
-                InitializeAccents();
+        InitializeAccents();
 
-                isResetQueued = false;
+        isResetQueued = false;
 
         spatialAnchorsGenFake.StartRecording();
     }
@@ -194,11 +193,13 @@ public class MidiPlayerScript : MonoBehaviour
         Debug.Log("tempo set to " + tempo);
     }
 
-    public void SetVolume(float volume){
+    public void SetVolume(float volume)
+    {
         midiFilePlayer.MPTK_Volume = volume;
     }
 
-    public void SignalAccent () {
+    public void SignalAccent()
+    {
         // TODO extract currentBeat calculation to a helper
         signaledAccentBeat = GetCurrentQuarterBeat();
     }
@@ -218,7 +219,8 @@ public class MidiPlayerScript : MonoBehaviour
                     // Max velocity, for accent to stand out
                     midiEvent.Velocity = 127;
                 }
-                else {
+                else
+                {
                     // To keep the overall piece quieter, so that accents stand out
                     midiEvent.Velocity /= 2;
                 }
