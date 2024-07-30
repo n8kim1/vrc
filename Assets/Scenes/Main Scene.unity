@@ -3060,6 +3060,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0dd37b731f55cc439a46d3adfb74f15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bpm: 140
+  gain: 0.5
+  running: 0
 --- !u!65 &1575739342
 BoxCollider:
   m_ObjectHideFlags: 0
