@@ -82,15 +82,10 @@ public class MidiPlayerScript : MonoBehaviour
         if (piece_choice_idx == 0)
         {
             midiFilePlayer.MPTK_MidiName = "eine_kle_mvt_2_tempo_prep";
-            // TODO read this properly from MIDI files
-            metronomeScheduled.InitBpm(60.0f);
         }
-
         else if (piece_choice_idx == 1)
         {
             midiFilePlayer.MPTK_MidiName = "eine_kle_prep_measure";
-            // TODO read this properly from MIDI files
-            metronomeScheduled.InitBpm(150.0f);
         }
 
         Debug.Log("Initializing playing, piece " + midiFilePlayer.MPTK_MidiName);
@@ -100,6 +95,7 @@ public class MidiPlayerScript : MonoBehaviour
         {
             ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
             tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
+            metronomeScheduled.InitBpm((float)midiLoaded.MPTK_InitialTempo);
 
             string infoMidi = "MIDI file's given duration: " + midiLoaded.MPTK_Duration.TotalSeconds + " seconds\n";
             infoMidi += "MIDI file's given tempo: " + midiLoaded.MPTK_InitialTempo + "\n";
