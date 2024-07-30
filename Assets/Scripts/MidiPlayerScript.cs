@@ -16,7 +16,7 @@ public class MidiPlayerScript : MonoBehaviour
     public TMP_Text mainText;
     public TMP_Text bottomText;
 
-    bool isResetQueued = true;
+    bool isInitializeQueued = true;
 
     // For computing beat/measure within piece
     long tickFirstNote;
@@ -106,11 +106,11 @@ public class MidiPlayerScript : MonoBehaviour
             Debug.Log(infoMidi);
         }
 
-        // TODO better volume controls?
-        midiFilePlayer.MPTK_Volume = 0.5f;
+        // Max out volume, for best signal clarity; users can always reduce as needed
+        midiFilePlayer.MPTK_Volume = 1.0f;
         InitializeAccents();
 
-        isResetQueued = false;
+        isInitializeQueued = false;
 
         spatialAnchorsGenFake.StartRecording();
     }
@@ -143,8 +143,7 @@ public class MidiPlayerScript : MonoBehaviour
 
         spatialAnchorsGenFake.StopRecording();
 
-        // TODO externally tracking this is rough
-        isResetQueued = true;
+        isInitializeQueued = true;
     }
 
     // Update is called once per frame
@@ -159,7 +158,7 @@ public class MidiPlayerScript : MonoBehaviour
         {
             Debug.Log("Play input was pressed", this);
 
-            if (isResetQueued)
+            if (isInitializeQueued)
             {
                 InitializePiece();
             }
@@ -200,7 +199,6 @@ public class MidiPlayerScript : MonoBehaviour
 
     public void SignalAccent()
     {
-        // TODO extract currentBeat calculation to a helper
         signaledAccentBeat = GetCurrentQuarterBeat();
     }
 
