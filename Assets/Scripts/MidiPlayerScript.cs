@@ -83,35 +83,19 @@ public class MidiPlayerScript : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    void InitializePiece()
     {
-        // Do _not_ call OVRInput.Update
-        // since it's already called in the OVRManager, 
-        // and multiple calls to it prevent GetDown, GetUp, and other frame-specific methods
-        // to fail (something to do with polling too many times)
-        // See, eg, https://lab.popul-ar.com/t/ovr-controller-buttons-not-working/1033
-        // OVRInput.Update();
-
-        // Check for both headset input and laptop-keyboard input (in debugging)
-        bool playTogglePressed = OVRInput.GetDown(OVRInput.RawButton.X) || Input.GetKeyDown(KeyCode.X);
-
-        // TODO restructure all of these blocks into helper methods. To see control flow more at a glance
-        if (playTogglePressed)
+        // Load proper piece and initialize data.
+        if (piece_choice_idx == 0)
         {
-            Debug.Log("Play input was pressed", this);
+            midiFilePlayer.MPTK_MidiName = "eine_kle_mvt_2_tempo_prep";
+            // TODO read this properly from MIDI files
+            metronomeScheduled.InitBpm(60.0f);
+        }
 
-            if (isResetQueued)
-            {
-                // Load proper piece and initialize data.
-                if (piece_choice_idx == 0) {
-                    midiFilePlayer.MPTK_MidiName = "eine_kle_mvt_2_tempo_prep";
-                    // TODO read this properly from MIDI files
-                    metronomeScheduled.InitBpm(60.0f);
-                }
-
-                else if (piece_choice_idx == 1) {
-                    midiFilePlayer.MPTK_MidiName = "eine_kle_prep_measure";
+        else if (piece_choice_idx == 1)
+        {
+            midiFilePlayer.MPTK_MidiName = "eine_kle_prep_measure";
                     // TODO read this properly from MIDI files
                     metronomeScheduled.InitBpm(150.0f);
                 }
@@ -137,44 +121,43 @@ public class MidiPlayerScript : MonoBehaviour
                 InitializeAccents();
 
                 isResetQueued = false;
-            }
-            if (!isPlaying) {
-                midiFilePlayer.MPTK_Play();
+    }
 
-                // Get tempo-related values, which now hold valid data,
-                // now that we're playing
-                // (Note: Before the midi player begins,
-                // these values are set to 0)
-                ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
-                tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
+    void PlayPiece()
+    {
+        midiFilePlayer.MPTK_Play();
 
-                spatialAnchorsGenFake.StartRecording();
+        // Get tempo-related values, which now hold valid data,
+        // now that we're playing
+        // (Note: Before the midi player begins,
+        // these values are set to 0)
+        ticksPerQuarter = midiFilePlayer.MPTK_DeltaTicksPerQuarterNote;
+        tickFirstNote = midiFilePlayer.MPTK_TickFirstNote;
+
+        spatialAnchorsGenFake.StartRecording();
 
                 mainText.text = "playing";
 
-                // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
-                // so we have to keep track of this manually.
-                // would be much better if not...
-                isPlaying = true;
+        // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
+        // so we have to keep track of this manually.
+        // would be much better if not...
+        isPlaying = true;
+    }
 
+    void PausePiece()
+    {
+        midiFilePlayer.MPTK_Pause();
+        mainText.text = "pausing...";
+        isPlaying = false;
+    }
 
-            }
-            else {
-                midiFilePlayer.MPTK_Pause();
-                mainText.text = "pausing...";
-                isPlaying = false;
-            }
-        }
+    void ResetPlayer()
+    {
+        mainText.text = "resetting...";
 
-        bool resetPressed = OVRInput.GetDown(OVRInput.RawButton.Y) || Input.GetKeyDown(KeyCode.Y);
-
-        if (resetPressed)
-        {
-            mainText.text = "resetting...";
-
-            // Yes, stop method, not reset, as
-            // this is the method that stops and resets to beginning)
-            midiFilePlayer.MPTK_Stop();
+        // Yes, stop method, not reset, as
+        // this is the method that stops and resets to beginning)
+        midiFilePlayer.MPTK_Stop();
 
             // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
             // so we have to keep track of this manually.
@@ -185,6 +168,45 @@ public class MidiPlayerScript : MonoBehaviour
 
             // TODO externally tracking this is rough
             isResetQueued = true;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Do _not_ call OVRInput.Update
+        // since it's already called in the OVRManager, 
+        // and multiple calls to it prevent GetDown, GetUp, and other frame-specific methods
+        // to fail (something to do with polling too many times)
+        // See, eg, https://lab.popul-ar.com/t/ovr-controller-buttons-not-working/1033
+        // OVRInput.Update();
+
+        // Check for both headset input and laptop-keyboard input (in debugging)
+        bool playTogglePressed = OVRInput.GetDown(OVRInput.RawButton.X) || Input.GetKeyDown(KeyCode.X);
+
+        // TODO restructure all of these blocks into helper methods. To see control flow more at a glance
+        if (playTogglePressed)
+        {
+            Debug.Log("Play input was pressed", this);
+
+            if (isResetQueued)
+            {
+                InitializePiece();
+            }
+            if (!isPlaying)
+            {
+                PlayPiece();
+            }
+            else
+            {
+                PausePiece();
+            }
+        }
+
+        bool resetPressed = OVRInput.GetDown(OVRInput.RawButton.Y) || Input.GetKeyDown(KeyCode.Y);
+
+        if (resetPressed)
+        {
+            ResetPlayer();
         }
 
         // TODO extract currentBeat calculation to a helper
