@@ -16,21 +16,16 @@ public class MidiPlayerScript : MonoBehaviour
     public TMP_Text mainText;
     public TMP_Text bottomText;
 
-    // TODO try switching out for midiFilePlayer.is_playing
-    bool isPlaying = false;
     bool isResetQueued = true;
 
     // For computing beat/measure within piece
     long tickFirstNote;
 
     long ticksPerQuarter;
-    long currentTick;
-    // Float, so decimals can be nicely displayed
-    float currentQuarter;
 
-    readonly HashSet<long> accentBeats = new();
+    readonly HashSet<float> accentBeats = new();
     readonly int accentBeatFrequency = 2;
-    long signaledAccentBeat = -2;
+    float signaledAccentBeat = -2;
 
     private int piece_choice_idx = 0;
     private readonly int piece_choice_len = 2;
@@ -80,7 +75,6 @@ public class MidiPlayerScript : MonoBehaviour
         {
             accentBeats.Add(i);
         }
-
     }
 
     void InitializePiece()
@@ -125,23 +119,22 @@ public class MidiPlayerScript : MonoBehaviour
         spatialAnchorsGenFake.StartRecording();
     }
 
+    float GetCurrentQuarterBeat()
+    {
+        if (ticksPerQuarter == 0) { return 0; }
+        return (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
+    }
+
     void PlayPiece()
     {
         midiFilePlayer.MPTK_Play();
-
         mainText.text = "playing";
-
-        // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
-        // so we have to keep track of this manually.
-        // would be much better if not...
-        isPlaying = true;
     }
 
     void PausePiece()
     {
         midiFilePlayer.MPTK_Pause();
         mainText.text = "pausing...";
-        isPlaying = false;
     }
 
     void ResetPlayer()
@@ -152,15 +145,10 @@ public class MidiPlayerScript : MonoBehaviour
         // this is the method that stops and resets to beginning)
         midiFilePlayer.MPTK_Stop();
 
-            // TODO I couldn't find an "isPlaying" attribute of the midiFilePlayer class
-            // so we have to keep track of this manually.
-            // would be much better if not...
-            isPlaying = false;
+        spatialAnchorsGenFake.StopRecording();
 
-            spatialAnchorsGenFake.StopRecording();
-
-            // TODO externally tracking this is rough
-            isResetQueued = true;
+        // TODO externally tracking this is rough
+        isResetQueued = true;
     }
 
     // Update is called once per frame
@@ -199,10 +187,7 @@ public class MidiPlayerScript : MonoBehaviour
         // Update state as needed 
         if (midiFilePlayer.MPTK_IsPlaying)
         {
-            // TODO extract currentBeat calculation to a helper
-            currentTick = midiFilePlayer.MPTK_TickCurrent;
-            currentQuarter = (currentTick - tickFirstNote) / ticksPerQuarter;
-            mainText.text = "q: " + currentQuarter;
+            mainText.text = "q: " + GetCurrentQuarterBeat();
         }
     }
 
@@ -218,8 +203,7 @@ public class MidiPlayerScript : MonoBehaviour
 
     public void SignalAccent () {
         // TODO extract currentBeat calculation to a helper
-        long currentBeat = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
-        signaledAccentBeat = currentBeat;
+        signaledAccentBeat = GetCurrentQuarterBeat();
     }
 
     // Process each midi event on the fly, according to conductor's signals and inputs
@@ -228,7 +212,7 @@ public class MidiPlayerScript : MonoBehaviour
         switch (midiEvent.Command)
         {
             case MPTKCommand.NoteOn:
-                long currentBeat = (midiFilePlayer.MPTK_TickCurrent - tickFirstNote) / ticksPerQuarter;
+                float currentBeat = GetCurrentQuarterBeat();
 
                 // Control accents on the note to play, according to what was signaled
                 // Allow some margin of error for signaling accent beats
